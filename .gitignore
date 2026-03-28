@@ -1,0 +1,24 @@
+cat > .gitignore <<EOF
+# Frontend
+node_modules/
+dist/
+build/
+
+# Backend
+__pycache__/
+*.pyc
+
+# Env
+.env
+
+# Local data
+data/store.json
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+EOF

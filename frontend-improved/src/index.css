@@ -1,0 +1,134 @@
+@import "leaflet/dist/leaflet.css";
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 214 20% 96%;
+    --foreground: 220 15% 18%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 220 15% 18%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 220 15% 18%;
+
+    --primary: 200 65% 38%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 210 18% 94%;
+    --secondary-foreground: 220 15% 25%;
+
+    --muted: 210 14% 93%;
+    --muted-foreground: 215 12% 48%;
+
+    --accent: 174 52% 40%;
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 214 20% 88%;
+    --input: 214 20% 88%;
+    --ring: 200 65% 38%;
+
+    --radius: 0.625rem;
+
+    --success: 152 56% 40%;
+    --success-foreground: 0 0% 100%;
+    --warning: 38 92% 50%;
+    --warning-foreground: 0 0% 100%;
+  }
+}
+
+@layer base {
+  * { @apply border-border; }
+  html, body { overflow-x: hidden; max-width: 100vw; }
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-feature-settings: "cv11", "ss01";
+  }
+}
+
+@layer components {
+
+  /* ── Status badges ── */
+  .status-badge {
+    @apply inline-flex items-center gap-1.5 rounded-md px-2.5 py-1 text-xs font-semibold tracking-wide uppercase;
+  }
+  .status-badge-active {
+    @apply status-badge bg-emerald-100 text-emerald-800;
+  }
+  .status-badge-warning {
+    @apply status-badge bg-amber-100 text-amber-800;
+  }
+  .status-badge-danger {
+    @apply status-badge bg-red-100 text-red-800;
+  }
+  .status-badge-neutral {
+    @apply status-badge bg-slate-100 text-slate-700;
+  }
+  .status-badge-blue {
+    @apply status-badge bg-blue-100 text-blue-800;
+  }
+
+  /* ── Cards ── */
+  .stat-card {
+    @apply rounded-xl border bg-card p-5 shadow-sm;
+  }
+
+  /* ── Section titles ── */
+  .section-title {
+    @apply text-xs font-bold uppercase tracking-widest text-muted-foreground;
+  }
+
+  /* ── Page title ── */
+  .page-title {
+    @apply text-lg font-bold text-foreground;
+  }
+
+  /* ── Input base ── */
+  .input-base {
+    @apply w-full rounded-lg border bg-background px-3 py-2.5 text-sm text-foreground
+           shadow-sm outline-none transition-all placeholder:text-muted-foreground
+           focus:border-primary focus:ring-2 focus:ring-primary/20;
+  }
+
+  /* ── Buttons ── */
+  .btn-primary {
+    @apply flex items-center justify-center gap-2 rounded-lg bg-primary px-4 py-2.5
+           text-sm font-semibold text-primary-foreground shadow-sm transition-all
+           hover:opacity-90 active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+  .btn-danger {
+    @apply flex items-center justify-center gap-2 rounded-lg bg-destructive px-4 py-2.5
+           text-sm font-semibold text-destructive-foreground shadow-sm transition-all
+           hover:opacity-90 active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+  .btn-accent {
+    @apply flex items-center justify-center gap-2 rounded-lg bg-accent px-4 py-2.5
+           text-sm font-semibold text-accent-foreground shadow-sm transition-all
+           hover:opacity-90 active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+  .btn-outline {
+    @apply flex items-center justify-center gap-2 rounded-lg border bg-card px-4 py-2.5
+           text-sm font-semibold text-foreground shadow-sm transition-all
+           hover:bg-muted active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+}
+
+@layer utilities {
+  .text-balance { text-wrap: balance; }
+
+  /* Leaflet fixes */
+  .leaflet-container {
+    width: 100% !important;
+    height: 100% !important;
+    z-index: 1;
+    border-radius: 0.75rem;
+  }
+  .leaflet-tile-container img,
+  .leaflet-tile { width: 256px !important; height: 256px !important; }
+}

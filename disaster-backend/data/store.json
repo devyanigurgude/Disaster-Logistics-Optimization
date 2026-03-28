@@ -1,0 +1,125 @@
+{
+  "disasters": [
+    {
+      "type": "Earthquake",
+      "severity": "high",
+      "location": {
+        "name": "Chakan",
+        "lat": 18.7623111,
+        "lon": 73.8625448
+      },
+      "radius_km": 4.0,
+      "status": "active",
+      "description": "ok",
+      "id": "0a77d459-4152-4d67-a352-b54b2bb1e3af",
+      "timestamp": "2026-03-28T09:27:12.416213"
+    },
+    {
+      "type": "Drought",
+      "severity": "medium",
+      "location": {
+        "name": "Mumbai",
+        "lat": 19.054999,
+        "lon": 72.8692035
+      },
+      "radius_km": 13.0,
+      "status": "active",
+      "description": "yes",
+      "id": "66c4f70f-d622-4214-9f34-4f8425b7838c",
+      "timestamp": "2026-03-28T09:46:39.651121"
+    }
+  ],
+  "warehouses": [
+    {
+      "name": "W1",
+      "location": {
+        "name": "Murbad",
+        "lat": 19.257118,
+        "lon": 73.3907493
+      },
+      "capacity": 100,
+      "current_stock": {
+        "food": 0,
+        "water": 0,
+        "medicine": 45,
+        "first_aid": 27
+      },
+      "id": "346e90ac-4512-4f51-990b-97d3f9b90f2a"
+    },
+    {
+      "name": "Thane",
+      "location": {
+        "name": "Thane",
+        "lat": 19.3653598,
+        "lon": 73.3685437
+      },
+      "capacity": 5000,
+      "current_stock": {
+        "food": 900,
+        "water": 1800,
+        "medicine": 450,
+        "first_aid": 270
+      },
+      "id": "741f8500-ee18-4667-a1dc-08f804cd380e"
+    }
+  ],
+  "dispatches": [
+    {
+      "warehouse_id": "95c38566-c598-4e9b-a007-8170cd0410b4",
+      "destination": {
+        "name": "Nashik",
+        "lat": 20.0112475,
+        "lon": 73.7902364
+      },
+      "resources": {
+        "food": 100,
+        "water": 200,
+        "medicine": 50,
+        "first_aid": 30
+      },
+      "route_summary": "First \u2192 Nashik (2h 45m)",
+      "id": "ece2127e-30b3-4021-95a9-c87953d95d3c",
+      "status": "pending",
+      "timestamp": "2026-03-28T09:24:47.181608",
+      "eta": null
+    },
+    {
+      "warehouse_id": "346e90ac-4512-4f51-990b-97d3f9b90f2a",
+      "destination": {
+        "name": "Nashik",
+        "lat": 20.0112475,
+        "lon": 73.7902364
+      },
+      "resources": {
+        "food": 10,
+        "water": 20,
+        "medicine": 5,
+        "first_aid": 3
+      },
+      "route_summary": "W1 \u2192 Nashik (2h 45m)",
+      "id": "07641633-da35-4d5b-bd69-ffc18066fb78",
+      "status": "pending",
+      "timestamp": "2026-03-28T09:29:36.817730",
+      "eta": null
+    },
+    {
+      "warehouse_id": "741f8500-ee18-4667-a1dc-08f804cd380e",
+      "destination": {
+        "name": "Mumbai",
+        "lat": 19.054999,
+        "lon": 72.8692035
+      },
+      "resources": {
+        "food": 100,
+        "water": 200,
+        "medicine": 50,
+        "first_aid": 30
+      },
+      "route_summary": "Thane -> Mumbai (1h 59m)",
+      "id": "d21b8f28-1edc-440e-a81f-9c1d46dc2743",
+      "status": "pending",
+      "timestamp": "2026-03-28T09:48:07.841223",
+      "eta": null
+    }
+  ]
+}
