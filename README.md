@@ -51,7 +51,7 @@ AEGIS/
 
 ### 1. Clone Repository
 ```bash
-git clone <repo-link>
+git clone https://github.com/devyanigurgude/Disaster-Logistics-Optimization-System.git 
 cd AEGIS
 ```
 
