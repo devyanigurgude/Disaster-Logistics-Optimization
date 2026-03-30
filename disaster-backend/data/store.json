@@ -2,17 +2,17 @@
   "disasters": [
     {
       "type": "Earthquake",
-      "severity": "medium",
+      "severity": "high",
       "location": {
         "name": "Karjat",
         "lat": 18.9127655,
         "lon": 73.3228202
       },
-      "radius_km": 21.0,
+      "radius_km": 18.0,
       "status": "active",
-      "description": "Highly Active Earthquake",
-      "id": "6f53c448-b649-425e-9d99-7c9d8e43f889",
-      "timestamp": "2026-03-30T14:02:11.881021"
+      "description": "Ok",
+      "id": "0bb50ffe-3255-48d6-a1be-d3580f465b87",
+      "timestamp": "2026-03-30T14:47:16.535961"
     }
   ],
   "warehouses": [
@@ -25,10 +25,10 @@
       },
       "capacity": 4994,
       "current_stock": {
-        "food": 900,
-        "water": 1800,
-        "medicine": 450,
-        "first_aid": 270
+        "food": 800,
+        "water": 1600,
+        "medicine": 400,
+        "first_aid": 240
       },
       "id": "4bf32bf4-25a4-4606-a77d-7207a64fa81d"
     }
@@ -127,6 +127,25 @@
       "id": "70b2c011-419d-4ed9-ab96-47645db5ee1e",
       "status": "pending",
       "timestamp": "2026-03-30T14:03:47.462033",
+      "eta": null
+    },
+    {
+      "warehouse_id": "4bf32bf4-25a4-4606-a77d-7207a64fa81d",
+      "destination": {
+        "name": "Karjat",
+        "lat": 18.9127655,
+        "lon": 73.3228202
+      },
+      "resources": {
+        "food": 100,
+        "water": 200,
+        "medicine": 50,
+        "first_aid": 30
+      },
+      "route_summary": "Relif Hub -> Karjat (2h 9m)",
+      "id": "1c7d2218-bc3a-4007-9fa2-4b75a0609b84",
+      "status": "pending",
+      "timestamp": "2026-03-30T14:23:22.770818",
       "eta": null
     }
   ]

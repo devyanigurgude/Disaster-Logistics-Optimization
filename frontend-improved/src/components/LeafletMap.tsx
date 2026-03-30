@@ -157,7 +157,10 @@ export default function LeafletMap({
     };
 
     legend.addTo(mapRef.current);
-    return () => legend.remove();
+
+    return () => {
+      legend.remove();
+    };
   }, []);
 
   useEffect(() => {
@@ -184,19 +187,7 @@ export default function LeafletMap({
       bounds.push([state.destination.lat, state.destination.lon]);
     }
 
-    if (state.alternateRoute && state.alternateRoute.path.length > 0) {
-      const coords: L.LatLngExpression[] = state.alternateRoute.path.map((p) => [p.lat, p.lon]);
-      const line = L.polyline(coords, {
-        color: "#10b981",
-        weight: 5,
-        opacity: 0.75,
-        dashArray: "10 6",
-      }).bindPopup(`<strong>Alternate Route</strong><br/>${state.alternateRoute.distance} km · ETA: ${state.alternateRoute.eta}`);
-      layers.addLayer(line);
-      coords.forEach((coord) => bounds.push(coord as L.LatLngTuple));
-    }
-
-    if (state.route && state.route.path.length > 0) {
+  if (state.route && state.route.path.length > 0) {
       const coords: L.LatLngExpression[] = state.route.path.map((p) => [p.lat, p.lon]);
       const color = state.route.blocked ? "#ef4444" : "#10b981";
       const label = state.route.blocked ? "Blocked Route" : "Safe Route";
@@ -207,6 +198,21 @@ export default function LeafletMap({
       coords.forEach((coord) => bounds.push(coord as L.LatLngTuple));
     }
 
+    if (state.alternateRoute && state.alternateRoute.path.length > 0) {
+  const coords: L.LatLngExpression[] = state.alternateRoute.path.map((p) => [p.lat, p.lon]);
+
+  const line = L.polyline(coords, {
+    color: "#10b981",
+    weight: 6, 
+    opacity: 0.95,
+    dashArray: "10 6",
+  }).bindPopup(
+    `<strong>Alternate Route (Recommended)</strong><br/>${state.alternateRoute.distance} km · ETA: ${state.alternateRoute.eta}`
+  );
+
+  layers.addLayer(line);
+  coords.forEach((coord) => bounds.push(coord as L.LatLngTuple));
+}
     state.disasters.forEach((disaster: Disaster) => {
       if (disaster.status === "resolved") return;
 
@@ -303,26 +309,12 @@ export default function LeafletMap({
   ]);
 
   return (
+  <div className="relative w-full h-full">
     <div
-      style={{
-        position: "relative",
-        width: "100%",
-        height: "100%",
-        minHeight: "500px",
-      }}
-    >
-      <div
-        ref={containerRef}
-        className={`rounded-lg border ${className}`}
-        style={{
-          position: "absolute",
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-        }}
-      />
-    </div>
-  );
+      ref={containerRef}
+      className="absolute inset-0 rounded-lg border"
+    />
+  </div>
+);
 }
 
