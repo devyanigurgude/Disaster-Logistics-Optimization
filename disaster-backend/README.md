@@ -125,13 +125,12 @@ http://localhost:8000/docs
 ```json
 {
   "source":      { "lat": 28.6139, "lon": 77.2090 },
-  "destination": { "lat": 19.0760, "lon": 72.8777 },
-  "disasters": [
-    { "lat": 23.0, "lon": 75.0, "radius_km": 80, "severity": 3 }
-  ],
-  "waypoints": []
+  "destination": { "lat": 19.0760, "lon": 72.8777 }
 }
 ```
+
+Note:
+Disaster data is managed internally by the backend and should NOT be sent in the request.
 
 **Response:**
 ```json
@@ -148,6 +147,13 @@ http://localhost:8000/docs
   "destination":     { "lat": 19.076,  "lon": 72.8777 }
 }
 ```
+
+## 🧠 Route Safety Logic
+
+- The backend is the single source of truth for route safety
+- Disaster data is stored and managed internally
+- The frontend does not compute safety
+- The C++ optimizer determines whether a route is blocked
 
 ---
 

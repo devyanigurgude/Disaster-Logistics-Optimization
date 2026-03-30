@@ -8,12 +8,12 @@ import DisasterManagementTab from "@/pages/DisasterManagementTab";
 import HistoryLogsTab from "@/pages/HistoryLogsTab";
 import { AppProvider } from "@/contexts/AppContext";
 import { useBackendSync } from "@/hooks/useBackendSync";
-import { useLocalStorageSync } from "@/hooks/useLocalStorageSync"; // ← add this
+import { useLocalStorageSync } from "@/hooks/useLocalStorageSync";
 
 function AppShell() {
   const [activeTab, setActiveTab] = useState<TabName>("Dashboard");
   const { ready, error } = useBackendSync();
-  useLocalStorageSync(); // ← add this — one line, that's it
+  useLocalStorageSync();
 
   return (
     <div className="flex min-h-screen flex-col bg-background">
@@ -21,8 +21,8 @@ function AppShell() {
 
       {error && (
         <div className="bg-amber-50 border-b border-amber-200 px-6 py-2 text-xs text-amber-700 flex items-center gap-2">
-          <span className="font-semibold">⚠ Backend offline:</span>
-          {error} — running on local data.
+          <span className="font-semibold">? Backend offline:</span>
+          {error} � running on local data.
         </div>
       )}
 

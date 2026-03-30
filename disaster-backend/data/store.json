@@ -2,65 +2,35 @@
   "disasters": [
     {
       "type": "Earthquake",
-      "severity": "high",
-      "location": {
-        "name": "Chakan",
-        "lat": 18.7623111,
-        "lon": 73.8625448
-      },
-      "radius_km": 4.0,
-      "status": "active",
-      "description": "ok",
-      "id": "0a77d459-4152-4d67-a352-b54b2bb1e3af",
-      "timestamp": "2026-03-28T09:27:12.416213"
-    },
-    {
-      "type": "Drought",
       "severity": "medium",
       "location": {
-        "name": "Mumbai",
-        "lat": 19.054999,
-        "lon": 72.8692035
+        "name": "Karjat",
+        "lat": 18.9127655,
+        "lon": 73.3228202
       },
-      "radius_km": 13.0,
+      "radius_km": 21.0,
       "status": "active",
-      "description": "yes",
-      "id": "66c4f70f-d622-4214-9f34-4f8425b7838c",
-      "timestamp": "2026-03-28T09:46:39.651121"
+      "description": "Highly Active Earthquake",
+      "id": "6f53c448-b649-425e-9d99-7c9d8e43f889",
+      "timestamp": "2026-03-30T14:02:11.881021"
     }
   ],
   "warehouses": [
     {
-      "name": "W1",
-      "location": {
-        "name": "Murbad",
-        "lat": 19.257118,
-        "lon": 73.3907493
-      },
-      "capacity": 100,
-      "current_stock": {
-        "food": 0,
-        "water": 0,
-        "medicine": 45,
-        "first_aid": 27
-      },
-      "id": "346e90ac-4512-4f51-990b-97d3f9b90f2a"
-    },
-    {
-      "name": "Thane",
+      "name": "Relif Hub",
       "location": {
         "name": "Thane",
         "lat": 19.3653598,
         "lon": 73.3685437
       },
-      "capacity": 5000,
+      "capacity": 4994,
       "current_stock": {
         "food": 900,
         "water": 1800,
         "medicine": 450,
         "first_aid": 270
       },
-      "id": "741f8500-ee18-4667-a1dc-08f804cd380e"
+      "id": "4bf32bf4-25a4-4606-a77d-7207a64fa81d"
     }
   ],
   "dispatches": [
@@ -119,6 +89,44 @@
       "id": "d21b8f28-1edc-440e-a81f-9c1d46dc2743",
       "status": "pending",
       "timestamp": "2026-03-28T09:48:07.841223",
+      "eta": null
+    },
+    {
+      "warehouse_id": "741f8500-ee18-4667-a1dc-08f804cd380e",
+      "destination": {
+        "name": "Chakan",
+        "lat": 18.7623111,
+        "lon": 73.8625448
+      },
+      "resources": {
+        "food": 100,
+        "water": 200,
+        "medicine": 50,
+        "first_aid": 30
+      },
+      "route_summary": "Thane -> Chakan (26m)",
+      "id": "6de07bda-eeab-4aeb-b19a-e242974d3e3d",
+      "status": "pending",
+      "timestamp": "2026-03-30T13:58:27.320284",
+      "eta": null
+    },
+    {
+      "warehouse_id": "4bf32bf4-25a4-4606-a77d-7207a64fa81d",
+      "destination": {
+        "name": "Karjat",
+        "lat": 18.9127655,
+        "lon": 73.3228202
+      },
+      "resources": {
+        "food": 100,
+        "water": 200,
+        "medicine": 50,
+        "first_aid": 30
+      },
+      "route_summary": "Relif Hub -> Karjat (2h 3m)",
+      "id": "70b2c011-419d-4ed9-ab96-47645db5ee1e",
+      "status": "pending",
+      "timestamp": "2026-03-30T14:03:47.462033",
       "eta": null
     }
   ]

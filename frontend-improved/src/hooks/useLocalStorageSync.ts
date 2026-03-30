@@ -1,5 +1,5 @@
 import { useEffect, useRef } from "react";
-import { useAppContext } from "@/contexts/AppContext";
+import { Dispatch, Disaster, LogEntry, Warehouse, useAppContext } from "@/contexts/AppContext";
 
 const KEYS = {
   disasters:  "sdl_disasters",
@@ -8,7 +8,7 @@ const KEYS = {
   logs:       "sdl_logs",
 };
 
-function save(key: string, value: any) {
+function save(key: string, value: unknown) {
   try {
     localStorage.setItem(key, JSON.stringify(value));
   } catch {
@@ -34,10 +34,10 @@ export function useLocalStorageSync() {
     if (initialized.current) return;
     initialized.current = true;
 
-    const disasters  = load<any[]>(KEYS.disasters);
-    const warehouses = load<any[]>(KEYS.warehouses);
-    const dispatches = load<any[]>(KEYS.dispatches);
-    const logs       = load<any[]>(KEYS.logs);
+    const disasters = load<Disaster[]>(KEYS.disasters);
+    const warehouses = load<Warehouse[]>(KEYS.warehouses);
+    const dispatches = load<Dispatch[]>(KEYS.dispatches);
+    const logs = load<LogEntry[]>(KEYS.logs);
 
     if (disasters  && disasters.length  > 0) {
       dispatch({ type: "SET_DISASTERS", payload: disasters });
@@ -57,7 +57,7 @@ export function useLocalStorageSync() {
         dispatch({ type: "ADD_LOG", payload: l })
       );
     }
-  }, []);
+  }, [dispatch]);
 
   // ── Save whenever state changes ─────────────────────────────────────────
   useEffect(() => {

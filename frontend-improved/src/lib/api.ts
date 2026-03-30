@@ -4,7 +4,46 @@
 
 import { City, RouteData, RouteSegment, Disaster, Warehouse } from "@/contexts/AppContext";
 
-export const API_BASE = "/api";
+// export const API_BASE = "/api";
+const API_BASE = "http://localhost:8000/api";
+
+type BackendRoutePoint = { lat: number; lon: number };
+type BackendRouteResponse = {
+  path: BackendRoutePoint[];
+  distance_km: number;
+  eta: string;
+  blocked: boolean;
+};
+
+type BackendDisaster = {
+  id: string;
+  type: string;
+  severity: Disaster["severity"];
+  location: City;
+  radius_km: number;
+  status: Disaster["status"];
+  timestamp: string;
+  description: string;
+};
+
+type BackendWarehouse = {
+  id: string;
+  name: string;
+  location: City;
+  capacity: number;
+  current_stock?: {
+    food?: number;
+    water?: number;
+    medicine?: number;
+    first_aid?: number;
+  };
+};
+
+function errorDetailFromBody(body: unknown): string | null {
+  if (!body || typeof body !== "object") return null;
+  const detail = (body as Record<string, unknown>).detail;
+  return typeof detail === "string" ? detail : null;
+}
 
 // ─── Generic fetch helper ─────────────────────────────────────────────────────
 
@@ -17,13 +56,14 @@ async function apiFetch<T>(
     ...options,
   });
   if (!res.ok) {
-    const err = await res.json().catch(() => ({ detail: res.statusText }));
-    throw new Error(err.detail ?? `API error ${res.status}`);
+    const errBody = (await res.json().catch(() => null)) as unknown;
+    const detail = errorDetailFromBody(errBody);
+    throw new Error(detail ?? `API error ${res.status}`);
   }
   if (res.status === 204) {
     return undefined as T;
   }
-  return res.json();
+  return (await res.json()) as T;
 }
 
 // ─── Route (calls Python → C++ optimizer) ────────────────────────────────────
@@ -40,12 +80,12 @@ export async function fetchRoute(
     destination: { lat: destination.lat, lon: destination.lon },
   };
 
-  const data = await apiFetch<any>("/route", {
+  const data = await apiFetch<BackendRouteResponse>("/route", {
     method: "POST",
     body: JSON.stringify(body),
   });
 
-  const path: RouteSegment[] = data.path.map((p: any) => ({
+  const path: RouteSegment[] = data.path.map((p) => ({
     lat: p.lat,
     lon: p.lon,
   }));
@@ -67,7 +107,7 @@ export async function fetchAlternateRoute(
   source: City,
   destination: City
 ): Promise<RouteData> {
-  const data = await apiFetch<any>("/route", {
+  const data = await apiFetch<BackendRouteResponse>("/route", {
     method: "POST",
     body: JSON.stringify({
       source:      { lat: source.lat, lon: source.lon },
@@ -75,7 +115,7 @@ export async function fetchAlternateRoute(
     }),
   });
 
-  const path: RouteSegment[] = data.path.map((p: any) => ({
+  const path: RouteSegment[] = data.path.map((p) => ({
     lat: p.lat,
     lon: p.lon,
   }));
@@ -93,7 +133,7 @@ export async function fetchAlternateRoute(
 // ─── Disasters ────────────────────────────────────────────────────────────────
 
 export async function loadDisasters(): Promise<Disaster[]> {
-  const data = await apiFetch<any[]>("/disasters");
+  const data = await apiFetch<BackendDisaster[]>("/disasters");
   return data.map(mapDisaster);
 }
 
@@ -106,7 +146,7 @@ export async function createDisaster(d: Omit<Disaster, "id" | "timestamp">): Pro
     status:      d.status,
     description: d.description,
   };
-  const data = await apiFetch<any>("/disasters", {
+  const data = await apiFetch<BackendDisaster>("/disasters", {
     method: "POST",
     body: JSON.stringify(body),
   });
@@ -122,7 +162,7 @@ export async function updateDisaster(id: string, d: Omit<Disaster, "id" | "times
     status:      d.status,
     description: d.description,
   };
-  const data = await apiFetch<any>(`/disasters/${id}`, {
+  const data = await apiFetch<BackendDisaster>(`/disasters/${id}`, {
     method: "PUT",
     body: JSON.stringify(body),
   });
@@ -136,7 +176,7 @@ export async function deleteDisaster(id: string): Promise<void> {
 // ─── Warehouses ───────────────────────────────────────────────────────────────
 
 export async function loadWarehouses(): Promise<Warehouse[]> {
-  const data = await apiFetch<any[]>("/warehouses");
+  const data = await apiFetch<BackendWarehouse[]>("/warehouses");
   return data.map(mapWarehouse);
 }
 
@@ -152,7 +192,7 @@ export async function createWarehouse(w: Omit<Warehouse, "id">): Promise<Warehou
       first_aid: w.currentStock.firstAid,
     },
   };
-  const data = await apiFetch<any>("/warehouses", {
+  const data = await apiFetch<BackendWarehouse>("/warehouses", {
     method: "POST",
     body: JSON.stringify(body),
   });
@@ -171,7 +211,7 @@ export async function updateWarehouse(id: string, w: Omit<Warehouse, "id">): Pro
       first_aid: w.currentStock.firstAid,
     },
   };
-  const data = await apiFetch<any>(`/warehouses/${id}`, {
+  const data = await apiFetch<BackendWarehouse>(`/warehouses/${id}`, {
     method: "PUT",
     body: JSON.stringify(body),
   });
@@ -207,24 +247,6 @@ export async function createDispatch(payload: {
 }
 
 // ─── Local helpers (no backend needed) ───────────────────────────────────────
-
-export function checkRouteAgainstDisasters(
-  route: RouteData,
-  disasters: Disaster[]
-): { blocked: boolean; affectingDisasters: Disaster[] } {
-  const active = disasters.filter((d) => d.status === "active");
-  const affecting: Disaster[] = [];
-  for (const d of active) {
-    const sampled = route.path.filter((_, i) => i % 5 === 0);
-    for (const pt of sampled) {
-      if (haversine(pt.lat, pt.lon, d.location.lat, d.location.lon) <= d.radius) {
-        affecting.push(d);
-        break;
-      }
-    }
-  }
-  return { blocked: affecting.length > 0, affectingDisasters: affecting };
-}
 
 export function selectBestWarehouse(
   destination: City,
@@ -275,7 +297,7 @@ export function getWarehouseDistance(destination: City, warehouse: Warehouse): n
 
 // ─── Mappers (backend snake_case → frontend camelCase) ────────────────────────
 
-function mapDisaster(d: any): Disaster {
+function mapDisaster(d: BackendDisaster): Disaster {
   return {
     id:          d.id,
     type:        d.type,
@@ -287,7 +309,7 @@ function mapDisaster(d: any): Disaster {
     description: d.description,
   };
 }
-function mapWarehouse(w: any): Warehouse {
+function mapWarehouse(w: BackendWarehouse): Warehouse {
   return {
     id:       w.id,
     name:     w.name,

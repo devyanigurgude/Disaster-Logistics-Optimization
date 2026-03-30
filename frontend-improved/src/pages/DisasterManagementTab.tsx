@@ -64,8 +64,9 @@ export default function DisasterManagementTab() {
         toast.success("Disaster reported.");
       }
       resetForm();
-    } catch (err: any) {
-      toast.error(`Failed: ${err.message}`);
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : "Unknown error";
+      toast.error(`Failed: ${msg}`);
     } finally {
       setSubmitting(false);
     }
@@ -86,8 +87,9 @@ export default function DisasterManagementTab() {
       dispatch({ type: "REMOVE_DISASTER", payload: id });
       addLog("disaster", `Disaster removed: ${label}`, "info");
       toast.success("Disaster removed.");
-    } catch (err: any) {
-      toast.error(`Failed: ${err.message}`);
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : "Unknown error";
+      toast.error(`Failed: ${msg}`);
     }
   };
 
@@ -104,8 +106,9 @@ export default function DisasterManagementTab() {
       dispatch({ type: "UPDATE_DISASTER", payload: updated });
       addLog("disaster", `${d.type} at ${d.location.name} → ${newStatus}`, "info");
       toast.success(`Status updated to ${newStatus}.`);
-    } catch (err: any) {
-      toast.error(`Failed: ${err.message}`);
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : "Unknown error";
+      toast.error(`Failed: ${msg}`);
     }
   };
 

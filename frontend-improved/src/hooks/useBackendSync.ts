@@ -26,18 +26,17 @@ export function useBackendSync() {
         dispatch({ type: "SET_WAREHOUSES", payload: warehouses });
         addLog("system", `Synced ${disasters.length} disasters and ${warehouses.length} warehouses from backend.`, "success");
         setReady(true);
-      } catch (err: any) {
-  const msg = err.message ?? "Backend unreachable";
-  console.error("Backend sync error:", err); 
-  setError(msg);
-  addLog("system", `Backend sync failed (${msg}). Using local seed data.`, "warning");
-  setReady(true);
-}
+      } catch (err: unknown) {
+        const msg = err instanceof Error ? err.message : "Backend unreachable";
+        setError(msg);
+        addLog("system", `Backend sync failed (${msg}). Using local seed data.`, "warning");
+        setReady(true);
+      }
     }
 
     sync();
     return () => { cancelled = true; };
-  }, []);
+  }, [addLog, dispatch]);
 
   return { ready, error };
 }

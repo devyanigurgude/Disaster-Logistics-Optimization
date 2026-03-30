@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Loader2, Route, AlertTriangle, CheckCircle, ArrowRight, Info } from "lucide-react";
 import CitySearch from "@/components/CitySearch";
 import LeafletMap from "@/components/LeafletMap";
-import { useAppContext } from "@/contexts/AppContext";
+import { RouteData, useAppContext } from "@/contexts/AppContext";
 import { fetchRoute, fetchAlternateRoute } from "@/lib/api";
 import { toast } from "sonner";
 
@@ -58,8 +58,8 @@ export default function RouteOperationsTab() {
         addLog("route", `Safe route confirmed: ${route.distance} km, ETA: ${route.eta}`, "success");
         toast.success(`Safe route found: ${route.distance} km, ETA: ${route.eta}`);
       }
-    } catch (err: any) {
-      const msg = err.message ?? "Unknown error";
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : "Unknown error";
       addLog("route", `Route calculation failed: ${msg}`, "error");
       dispatch({ type: "SET_ERROR", payload: { route: msg } });
       toast.error("Failed to calculate route.");
@@ -205,7 +205,9 @@ export default function RouteOperationsTab() {
 }
 
 function RouteInfoCard({ label, route, isAlternate }: {
-  label: string; route: any; isAlternate?: boolean;
+  label: string;
+  route: RouteData;
+  isAlternate?: boolean;
 }) {
   return (
     <div className={`rounded-xl border p-4 ${

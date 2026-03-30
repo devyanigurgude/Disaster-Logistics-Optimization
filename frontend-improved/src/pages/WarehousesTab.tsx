@@ -56,8 +56,9 @@ export default function WarehousesTab() {
         toast.success("Warehouse added.");
       }
       resetForm();
-    } catch (err: any) {
-      toast.error(`Failed: ${err.message}`);
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : "Unknown error";
+      toast.error(`Failed: ${msg}`);
     } finally {
       setSubmitting(false);
     }
@@ -80,8 +81,9 @@ export default function WarehousesTab() {
       dispatch({ type: "REMOVE_WAREHOUSE", payload: w.id });
       addLog("system", `Warehouse "${w.name}" removed`, "warning");
       toast.success(`Warehouse "${w.name}" removed.`);
-    } catch (err: any) {
-      toast.error(`Failed: ${err.message}`);
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : "Unknown error";
+      toast.error(`Failed: ${msg}`);
     }
   };
 
