@@ -1,36 +1,50 @@
 {
   "disasters": [
     {
-      "type": "Earthquake",
-      "severity": "high",
+      "type": "Storm",
+      "severity": "medium",
       "location": {
-        "name": "Karjat",
-        "lat": 18.9127655,
-        "lon": 73.3228202
+        "name": "Ahilyanagar",
+        "lat": 19.092952,
+        "lon": 74.7493451
       },
-      "radius_km": 18.0,
+      "radius_km": 21.0,
       "status": "active",
-      "description": "Ok",
-      "id": "0bb50ffe-3255-48d6-a1be-d3580f465b87",
-      "timestamp": "2026-03-30T14:47:16.535961"
+      "description": "asdsacasc",
+      "id": "3135442f-92a4-47c8-8e0c-57e41d8efbb4",
+      "timestamp": "2026-04-01T07:02:09.445989"
+    },
+    {
+      "type": "Hurricane",
+      "severity": "critical",
+      "location": {
+        "name": "Malegaon",
+        "lat": 20.5576062,
+        "lon": 74.5246514
+      },
+      "radius_km": 24.0,
+      "status": "active",
+      "description": "Critical",
+      "id": "04bd330c-717c-4c70-b969-6eb80900321e",
+      "timestamp": "2026-04-01T11:42:13.044121"
     }
   ],
   "warehouses": [
     {
-      "name": "Relif Hub",
+      "name": "The helper",
       "location": {
-        "name": "Thane",
-        "lat": 19.3653598,
-        "lon": 73.3685437
+        "name": "Nagpur",
+        "lat": 21.1498134,
+        "lon": 79.0820556
       },
-      "capacity": 4994,
+      "capacity": 6276,
       "current_stock": {
-        "food": 800,
-        "water": 1600,
-        "medicine": 400,
-        "first_aid": 240
+        "food": 558395,
+        "water": 0,
+        "medicine": 0,
+        "first_aid": 0
       },
-      "id": "4bf32bf4-25a4-4606-a77d-7207a64fa81d"
+      "id": "5ba95b65-3712-48b2-9d01-eaa347208a28"
     }
   ],
   "dispatches": [
@@ -146,6 +160,272 @@
       "id": "1c7d2218-bc3a-4007-9fa2-4b75a0609b84",
       "status": "pending",
       "timestamp": "2026-03-30T14:23:22.770818",
+      "eta": null
+    },
+    {
+      "warehouse_id": "4bf32bf4-25a4-4606-a77d-7207a64fa81d",
+      "destination": {
+        "name": "Karjat",
+        "lat": 18.9127655,
+        "lon": 73.3228202
+      },
+      "resources": {
+        "food": 100,
+        "water": 200,
+        "medicine": 50,
+        "first_aid": 30
+      },
+      "route_summary": "Relif Hub -> Karjat (1h 30m)",
+      "id": "9b8dd704-ef92-4334-b7ae-49458448bfdd",
+      "status": "pending",
+      "timestamp": "2026-03-31T13:17:57.221184",
+      "eta": null
+    },
+    {
+      "warehouse_id": "4bf32bf4-25a4-4606-a77d-7207a64fa81d",
+      "destination": {
+        "name": "Manchar",
+        "lat": 19.0033298,
+        "lon": 73.942711
+      },
+      "resources": {
+        "food": 100,
+        "water": 200,
+        "medicine": 50,
+        "first_aid": 30
+      },
+      "route_summary": "Relif Hub -> Manchar (1h 30m)",
+      "id": "7045a872-9885-4daa-9d35-f09a5f081578",
+      "status": "pending",
+      "timestamp": "2026-03-31T13:18:03.287554",
+      "eta": null
+    },
+    {
+      "warehouse_id": "4bf32bf4-25a4-4606-a77d-7207a64fa81d",
+      "destination": {
+        "name": "Ahilyanagar",
+        "lat": 19.092952,
+        "lon": 74.7493451
+      },
+      "resources": {
+        "food": 100,
+        "water": 200,
+        "medicine": 50,
+        "first_aid": 30
+      },
+      "route_summary": "Relif Hub -> Ahilyanagar (2026-04-01T10:45:40Z)",
+      "id": "25624bf0-031b-4c7d-a729-5973fd3b588b",
+      "status": "pending",
+      "timestamp": "2026-04-01T08:23:50.242412",
+      "eta": null
+    },
+    {
+      "warehouse_id": "4bf32bf4-25a4-4606-a77d-7207a64fa81d",
+      "destination": {
+        "name": "Ahilyanagar",
+        "lat": 19.092952,
+        "lon": 74.7493451
+      },
+      "resources": {
+        "food": 100,
+        "water": 200,
+        "medicine": 50,
+        "first_aid": 30
+      },
+      "route_summary": "Relif Hub -> Ahilyanagar (2026-04-01T10:45:40Z)",
+      "id": "37d036a5-0e49-4471-9176-86777d412824",
+      "status": "pending",
+      "timestamp": "2026-04-01T08:34:07.859452",
+      "eta": null
+    },
+    {
+      "warehouse_id": "4bf32bf4-25a4-4606-a77d-7207a64fa81d",
+      "destination": {
+        "name": "Ahilyanagar",
+        "lat": 19.092952,
+        "lon": 74.7493451
+      },
+      "resources": {
+        "food": 100,
+        "water": 200,
+        "medicine": 50,
+        "first_aid": 30
+      },
+      "route_summary": "Relif Hub -> Ahilyanagar (2026-04-01T11:55:34Z)",
+      "id": "9e5d40af-4d06-45d5-9229-4eb3cf2714e3",
+      "status": "pending",
+      "timestamp": "2026-04-01T08:35:08.261585",
+      "eta": null
+    },
+    {
+      "warehouse_id": "4bf32bf4-25a4-4606-a77d-7207a64fa81d",
+      "destination": {
+        "name": "Ahilyanagar",
+        "lat": 19.092952,
+        "lon": 74.7493451
+      },
+      "resources": {
+        "food": 100,
+        "water": 200,
+        "medicine": 50,
+        "first_aid": 30
+      },
+      "route_summary": "Relif Hub -> Ahilyanagar (2026-04-01T11:57:16Z)",
+      "id": "edb3b597-3979-4872-9524-0e2660aaf672",
+      "status": "pending",
+      "timestamp": "2026-04-01T08:36:23.426753",
+      "eta": null
+    },
+    {
+      "warehouse_id": "4bf32bf4-25a4-4606-a77d-7207a64fa81d",
+      "destination": {
+        "name": "Ahilyanagar",
+        "lat": 19.092952,
+        "lon": 74.7493451
+      },
+      "resources": {
+        "food": 100,
+        "water": 200,
+        "medicine": 50,
+        "first_aid": 30
+      },
+      "route_summary": "Relif Hub -> Ahilyanagar (2h 42m)",
+      "id": "39a460e4-02c2-493a-86ba-5ed7dd9976df",
+      "status": "pending",
+      "timestamp": "2026-04-01T11:20:14.652301",
+      "eta": null
+    },
+    {
+      "warehouse_id": "ec1d58bc-601d-42da-97b1-601ba424ef28",
+      "destination": {
+        "name": "Ahilyanagar",
+        "lat": 19.092952,
+        "lon": 74.7493451
+      },
+      "resources": {
+        "food": 100,
+        "water": 200,
+        "medicine": 50,
+        "first_aid": 30
+      },
+      "route_summary": "New Warehouse -> Ahilyanagar (2h 42m)",
+      "id": "9081962b-90cc-4c0c-9a6a-4b8d15b01ced",
+      "status": "pending",
+      "timestamp": "2026-04-01T11:33:33.815833",
+      "eta": null
+    },
+    {
+      "warehouse_id": "ec1d58bc-601d-42da-97b1-601ba424ef28",
+      "destination": {
+        "name": "Ahilyanagar",
+        "lat": 19.092952,
+        "lon": 74.7493451
+      },
+      "resources": {
+        "food": 100,
+        "water": 200,
+        "medicine": 50,
+        "first_aid": 30
+      },
+      "route_summary": "New Warehouse -> Ahilyanagar (2h 42m)",
+      "id": "296d0826-535a-474e-b455-051a936d5735",
+      "status": "pending",
+      "timestamp": "2026-04-01T11:34:26.460987",
+      "eta": null
+    },
+    {
+      "warehouse_id": "ec1d58bc-601d-42da-97b1-601ba424ef28",
+      "destination": {
+        "name": "Ahilyanagar",
+        "lat": 19.092952,
+        "lon": 74.7493451
+      },
+      "resources": {
+        "food": 100,
+        "water": 200,
+        "medicine": 50,
+        "first_aid": 30
+      },
+      "route_summary": "New Warehouse -> Ahilyanagar (2h 42m)",
+      "id": "540e5759-ef1f-4569-bd78-f48b05bc61b4",
+      "status": "pending",
+      "timestamp": "2026-04-01T11:35:23.796409",
+      "eta": null
+    },
+    {
+      "warehouse_id": "ec1d58bc-601d-42da-97b1-601ba424ef28",
+      "destination": {
+        "name": "Ahilyanagar",
+        "lat": 19.092952,
+        "lon": 74.7493451
+      },
+      "resources": {
+        "food": 100,
+        "water": 200,
+        "medicine": 50,
+        "first_aid": 30
+      },
+      "route_summary": "New Warehouse -> Ahilyanagar (2h 42m)",
+      "id": "1132e94c-57fa-4c17-b249-a49bb8f36547",
+      "status": "pending",
+      "timestamp": "2026-04-01T11:38:21.242867",
+      "eta": null
+    },
+    {
+      "warehouse_id": "ec1d58bc-601d-42da-97b1-601ba424ef28",
+      "destination": {
+        "name": "Ahilyanagar",
+        "lat": 19.092952,
+        "lon": 74.7493451
+      },
+      "resources": {
+        "food": 100,
+        "water": 200,
+        "medicine": 50,
+        "first_aid": 30
+      },
+      "route_summary": "New Warehouse -> Ahilyanagar (2h 42m)",
+      "id": "9c932069-c8c3-46d6-a092-c2b00c328347",
+      "status": "pending",
+      "timestamp": "2026-04-01T11:39:39.356129",
+      "eta": null
+    },
+    {
+      "warehouse_id": "ec1d58bc-601d-42da-97b1-601ba424ef28",
+      "destination": {
+        "name": "Ahilyanagar",
+        "lat": 19.092952,
+        "lon": 74.7493451
+      },
+      "resources": {
+        "food": 100,
+        "water": 200,
+        "medicine": 50,
+        "first_aid": 30
+      },
+      "route_summary": "New Warehouse -> Ahilyanagar (2h 42m)",
+      "id": "edc37c35-1cc2-46b7-b321-bf55f1684c53",
+      "status": "pending",
+      "timestamp": "2026-04-01T11:40:05.463478",
+      "eta": null
+    },
+    {
+      "warehouse_id": "ec1d58bc-601d-42da-97b1-601ba424ef28",
+      "destination": {
+        "name": "Ahilyanagar",
+        "lat": 19.092952,
+        "lon": 74.7493451
+      },
+      "resources": {
+        "food": 100,
+        "water": 200,
+        "medicine": 50,
+        "first_aid": 30
+      },
+      "route_summary": "New Warehouse -> Ahilyanagar (2h 42m)",
+      "id": "3649b6bc-9ede-47cd-a5e4-bdd4cdbfd704",
+      "status": "pending",
+      "timestamp": "2026-04-01T11:41:01.290731",
       "eta": null
     }
   ]

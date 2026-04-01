@@ -83,7 +83,7 @@ class Warehouse(WarehouseCreate):
 # ─── Route ────────────────────────────────────────────────────────────────────
 
 class DisasterZoneInput(BaseModel):
-    """Compact disaster zone passed to the C++ optimizer."""
+    """Compact disaster zone passed directly in the route request."""
     lat:       float
     lon:       float
     radius_km: float = 50.0
@@ -100,16 +100,30 @@ class PathPoint(BaseModel):
     lon: float
 
 class RouteResponse(BaseModel):
-    status:          str
-    path:            List[PathPoint]
+    # ── Core fields (always present) ─────────────────────────────────────────
+    status:          str                  # "ok" | "no_safe_path"
+    path:            List[PathPoint]      # The SAFE path to follow (green line)
     distance_km:     float
     duration_min:    int
     eta:             str
-    blocked:         bool
-    penalty_applied: bool
+    blocked:         bool                 # True if direct route hits a disaster
+    penalty_applied: bool                 # Always False (hard blocking, no penalties)
     nodes_explored:  int
     source:          Coordinates
     destination:     Coordinates
+
+    # ── Bonus visualization fields (present when blocked=True) ───────────────
+    # direct_path  = the original blocked route → draw as RED dashed line
+    # safe_path    = the safe detour            → same as `path`, for convenience
+    direct_path:        List[PathPoint] = []
+    safe_path:          List[PathPoint] = []
+    safe_distance_km:   float           = 0.0
+    safe_duration_min:  int             = 0
+
+    class Config:
+        use_enum_values = True
+        # Allow extra fields from C++ output without crashing
+        extra = "ignore"
 
 
 # ─── Dispatch ─────────────────────────────────────────────────────────────────
@@ -121,9 +135,9 @@ class DispatchCreate(BaseModel):
     route_summary: Optional[str] = None
 
 class Dispatch(DispatchCreate):
-    id:        str    = Field(default_factory=lambda: str(uuid.uuid4()))
+    id:        str           = Field(default_factory=lambda: str(uuid.uuid4()))
     status:    DispatchStatus = DispatchStatus.PENDING
-    timestamp: str    = Field(default_factory=lambda: datetime.utcnow().isoformat())
+    timestamp: str           = Field(default_factory=lambda: datetime.utcnow().isoformat())
     eta:       Optional[str] = None
 
     class Config:

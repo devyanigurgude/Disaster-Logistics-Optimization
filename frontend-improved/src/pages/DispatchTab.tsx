@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Truck, CheckCircle, Clock, Loader2, AlertTriangle, Package } from "lucide-react";
 import LeafletMap from "@/components/LeafletMap";
 import { useAppContext, Warehouse, Dispatch, Disaster } from "@/contexts/AppContext";
-import { selectBestWarehouse, getWarehouseDistance, createDispatch } from "@/lib/api";
+import { selectBestWarehouse, getWarehouseDistance, createDispatch, updateDispatchStatus, updateWarehouse } from "@/lib/api";
 import { toast } from "sonner";
 
 export default function DispatchTab() {
@@ -53,12 +53,15 @@ export default function DispatchTab() {
       toast.error("Calculate a route in Route Operations first.");
       return;
     }
+    // Read route BEFORE clearing
+    const chosenRoute = state.alternateRoute || state.route;
 
     setDispatching(true);
     dispatch({ type: "SET_LOADING", payload: { dispatch: true } });
 
-    const chosenRoute = state.alternateRoute || state.route;
-
+    // Clear routes after reading
+    dispatch({ type: "SET_ROUTE", payload: null });
+    dispatch({ type: "SET_ALTERNATE_ROUTE", payload: null });
     const newDispatch: Dispatch = {
       id: crypto.randomUUID(),
       warehouseId: best.id,
@@ -78,14 +81,19 @@ export default function DispatchTab() {
     const updatedWarehouse: Warehouse = {
       ...best,
       currentStock: {
-        food: Math.max(0, best.currentStock.food - resources.food),
-        water: Math.max(0, best.currentStock.water - resources.water),
+        food:     Math.max(0, best.currentStock.food     - resources.food),
+        water:    Math.max(0, best.currentStock.water    - resources.water),
         medicine: Math.max(0, best.currentStock.medicine - resources.medicine),
         firstAid: Math.max(0, best.currentStock.firstAid - resources.firstAid),
       },
     };
     dispatch({ type: "UPDATE_WAREHOUSE", payload: updatedWarehouse });
-
+    updateWarehouse(updatedWarehouse.id, {
+      name:         updatedWarehouse.name,
+      location:     updatedWarehouse.location,
+      capacity:     updatedWarehouse.capacity,
+      currentStock: updatedWarehouse.currentStock,
+    }).catch(() => {});
     addLog("dispatch", `Dispatch: ${best.name} -> ${selectedDisaster.location.name} (${totalResources} units)`, "success");
     toast.success("Emergency supplies dispatched!");
 
@@ -96,21 +104,26 @@ export default function DispatchTab() {
         resources,
         route_summary: `${best.name} -> ${selectedDisaster.location.name} (${chosenRoute?.eta ?? "?"})`,
       });
-    } catch {
-      // Non-fatal
+    } catch (err: any) {
+      console.warn("Backend dispatch sync failed (non-fatal):", err.message);
+      // Non-fatal — local state already updated
     }
 
-    setTimeout(() => {
+    setTimeout(async () => {
       dispatch({ type: "UPDATE_DISPATCH", payload: { id: newDispatch.id, updates: { status: "in_transit" } } });
-      addLog("dispatch", `Dispatch in transit to ${selectedDisaster.location.name}`, "info");
+      addLog("dispatch", `In transit to ${selectedDisaster.location.name}`, "info");
+      updateDispatchStatus(newDispatch.id, "in_transit").catch((e) =>
+        console.warn("Status sync failed:", e.message)
+      );
     }, 3000);
 
-    setTimeout(() => {
+    setTimeout(async () => {
       dispatch({ type: "UPDATE_DISPATCH", payload: { id: newDispatch.id, updates: { status: "delivered", currentPosition: undefined } } });
-      addLog("dispatch", `Dispatch delivered to ${selectedDisaster.location.name}`, "success");
-    }, 12000);
-
-    setDispatching(false);
+      addLog("dispatch", `Delivered to ${selectedDisaster.location.name}`, "success");
+      updateDispatchStatus(newDispatch.id, "delivered").catch((e) =>
+        console.warn("Status sync failed:", e.message)
+      );
+    }, 12000);setDispatching(false);
     dispatch({ type: "SET_LOADING", payload: { dispatch: false } });
     setResources({ food: 100, water: 200, medicine: 50, firstAid: 30 });
   };
@@ -301,7 +314,7 @@ function DispatchCard({ dispatch: d }: { dispatch: Dispatch }) {
         </span>
       </div>
       <p className="text-xs text-muted-foreground">
-         {d.destination.name} � ETA: {d.eta} � {total.toLocaleString()} units
+        {d.destination.name} — ETA: {d.eta} — {total.toLocaleString()} units
       </p>
       <p className="mt-0.5 font-mono text-xs text-muted-foreground">
         {new Date(d.timestamp).toLocaleTimeString()}
@@ -309,3 +322,4 @@ function DispatchCard({ dispatch: d }: { dispatch: Dispatch }) {
     </div>
   );
 }
+    

@@ -4,7 +4,7 @@
 
 import { useEffect, useState } from "react";
 import { useAppContext } from "@/contexts/AppContext";
-import { loadDisasters, loadWarehouses } from "@/lib/api";
+import { loadDisasters, loadWarehouses, loadDispatches } from "@/lib/api";
 
 export function useBackendSync() {
   const { dispatch, addLog } = useAppContext();
@@ -16,16 +16,17 @@ export function useBackendSync() {
 
     async function sync() {
       try {
-        const [disasters, warehouses] = await Promise.all([
+        const [disasters, warehouses, dispatches] = await Promise.all([
           loadDisasters(),
           loadWarehouses(),
+          loadDispatches(),
         ]);
         if (cancelled) return;
 
         dispatch({ type: "SET_DISASTERS",  payload: disasters });
         dispatch({ type: "SET_WAREHOUSES", payload: warehouses });
-        addLog("system", `Synced ${disasters.length} disasters and ${warehouses.length} warehouses from backend.`, "success");
-        setReady(true);
+        dispatches.forEach((d) => dispatch({ type: "ADD_DISPATCH", payload: d }));
+        addLog("system", `Synced ${disasters.length} disasters, ${warehouses.length} warehouses, ${dispatches.length} dispatches from backend.`, "success");    setReady(true);
       } catch (err: unknown) {
         const msg = err instanceof Error ? err.message : "Backend unreachable";
         setError(msg);

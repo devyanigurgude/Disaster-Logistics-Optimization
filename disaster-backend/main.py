@@ -2,10 +2,10 @@
 main.py — Entry point for the Smart Disaster Logistics FastAPI backend.
 
 Run:
-    uvicorn main:app --reload --port 8080
+    uvicorn main:app --reload --port 8000
 
 Docs:
-    http://localhost:8080/docs
+    http://localhost:8000/docs
 """
 
 import logging
@@ -13,7 +13,6 @@ import os
 from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-
 from app.routes import router
 from app.services.data_store import (
     STORE_FILE,
@@ -75,7 +74,7 @@ app = FastAPI(
     lifespan    = lifespan,
 )
 
-# CORS — allow the React frontend (default Vite port 5173)
+# CORS — allow all origins (React frontend on Vite port 5173)
 app.add_middleware(
     CORSMiddleware,
     allow_origins     = ["*"],

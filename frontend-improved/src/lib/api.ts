@@ -10,11 +10,22 @@ const API_BASE = "http://localhost:8000/api";
 type BackendRoutePoint = { lat: number; lon: number };
 type BackendRouteResponse = {
   path: BackendRoutePoint[];
+  direct_path?: BackendRoutePoint[];
   distance_km: number;
   eta: string;
   blocked: boolean;
 };
 
+function formatEta(isoString: string): string {
+  const now = Date.now();
+  const then = new Date(isoString).getTime();
+  const mins = Math.round((then - now) / 60000);
+  if (isNaN(mins) || mins <= 0) return "-";
+  if (mins < 60) return `${mins}m`;
+  const h = Math.floor(mins / 60);
+  const m = mins % 60;
+  return m > 0 ? `${h}h ${m}m` : `${h}h`;
+}
 type BackendDisaster = {
   id: string;
   type: string;
@@ -67,14 +78,11 @@ async function apiFetch<T>(
 }
 
 // ─── Route (calls Python → C++ optimizer) ────────────────────────────────────
-
 export async function fetchRoute(
   source: City,
   destination: City
 ): Promise<RouteData> {
-  // IMPORTANT:
-  // Do NOT send disasters from frontend.
-  // Backend is the single source of truth for disaster data.
+
   const body = {
     source:      { lat: source.lat, lon: source.lon },
     destination: { lat: destination.lat, lon: destination.lon },
@@ -90,46 +98,23 @@ export async function fetchRoute(
     lon: p.lon,
   }));
 
-  return {
-    path,
-    distance:           Math.round(data.distance_km),
-    eta:                data.eta,
-    safe:               !data.blocked,
-    blocked:            data.blocked,
-    alternateAvailable: false,
-  };
-}
-
-// IMPORTANT:
-// Alternate route must NOT be forced safe.
-// Trust backend response for safety status.
-export async function fetchAlternateRoute(
-  source: City,
-  destination: City
-): Promise<RouteData> {
-  const data = await apiFetch<BackendRouteResponse>("/route", {
-    method: "POST",
-    body: JSON.stringify({
-      source:      { lat: source.lat, lon: source.lon },
-      destination: { lat: destination.lat, lon: destination.lon },
-    }),
-  });
-
-  const path: RouteSegment[] = data.path.map((p) => ({
+  const directPath: RouteSegment[] = (data.direct_path ?? []).map((p) => ({
     lat: p.lat,
     lon: p.lon,
   }));
 
   return {
     path,
-    distance:           Math.round(data.distance_km),
-    eta:                data.eta,
-    safe:               !data.blocked,
-    blocked:            data.blocked,
+    directPath,
+    distance: Math.round(data.distance_km),
+    eta: formatEta(data.eta),
+    safe: !data.blocked,
+    blocked: data.blocked,
     alternateAvailable: false,
   };
 }
 
+// ─── Route computation (to be called from component with state & dispatch) ────
 // ─── Disasters ────────────────────────────────────────────────────────────────
 
 export async function loadDisasters(): Promise<Disaster[]> {
@@ -235,19 +220,17 @@ export async function createDispatch(payload: {
     body: JSON.stringify({
       warehouse_id:  payload.warehouse_id,
       destination:   payload.destination,
-      resources: {
-        food:      payload.resources.food,
-        water:     payload.resources.water,
-        medicine:  payload.resources.medicine,
-        first_aid: payload.resources.firstAid,
-      },
-      route_summary: payload.route_summary ?? null,
+     resources: {
+        food:      payload.resources.food      ?? 0,
+        water:     payload.resources.water     ?? 0,
+        medicine:  payload.resources.medicine  ?? 0,
+        first_aid: payload.resources.firstAid  ?? 0,
+      }, route_summary: payload.route_summary ?? null,
     }),
   });
 }
 
 // ─── Local helpers (no backend needed) ───────────────────────────────────────
-
 export function selectBestWarehouse(
   destination: City,
   warehouses: Warehouse[],
@@ -256,32 +239,49 @@ export function selectBestWarehouse(
   if (!warehouses.length) return { best: null, alternatives: [], reason: "No warehouses available" };
 
   const scored = warehouses
-    .map((w) => ({
-      warehouse: w,
-      distance: haversine(destination.lat, destination.lon, w.location.lat, w.location.lon),
-      hasResources:
+    .map((w) => {
+      const distance = haversine(destination.lat, destination.lon, w.location.lat, w.location.lon);
+      const hasResources =
         w.currentStock.food >= required.food &&
         w.currentStock.water >= required.water &&
         w.currentStock.medicine >= required.medicine &&
-        w.currentStock.firstAid >= required.firstAid,
-    }))
-    .sort((a, b) => a.distance - b.distance);
+        w.currentStock.firstAid >= required.firstAid;
+      const hasAnyStock =
+        w.currentStock.food > 0 ||
+        w.currentStock.water > 0 ||
+        w.currentStock.medicine > 0 ||
+        w.currentStock.firstAid > 0;
+      return { warehouse: w, distance, hasResources, hasAnyStock };
+    })
+    .sort((a, b) => a.distance - b.distance); // always sort by distance first
 
-  const eligible = scored.filter((s) => s.hasResources);
-  if (eligible.length > 0) {
+  // Priority 1: nearest warehouse that has enough of everything
+  const fullyEligible = scored.filter((s) => s.hasResources);
+  if (fullyEligible.length > 0) {
     return {
-      best:         eligible[0].warehouse,
-      alternatives: eligible.slice(1).map((e) => e.warehouse),
-      reason:       `Nearest warehouse with sufficient resources (${Math.round(eligible[0].distance)} km away)`,
+      best:         fullyEligible[0].warehouse,
+      alternatives: fullyEligible.slice(1).map((e) => e.warehouse),
+      reason:       `Nearest warehouse with sufficient resources (${Math.round(fullyEligible[0].distance)} km away)`,
     };
   }
+
+  // Priority 2: nearest warehouse that has at least some stock
+  const partiallyEligible = scored.filter((s) => s.hasAnyStock);
+  if (partiallyEligible.length > 0) {
+    return {
+      best:         partiallyEligible[0].warehouse,
+      alternatives: partiallyEligible.slice(1).map((e) => e.warehouse),
+      reason:       `Nearest warehouse with partial stock (${Math.round(partiallyEligible[0].distance)} km away — some resources may be insufficient)`,
+    };
+  }
+
+  // Priority 3: just pick the nearest one
   return {
     best:         scored[0].warehouse,
     alternatives: scored.slice(1).map((s) => s.warehouse),
     reason:       `Nearest warehouse selected (${Math.round(scored[0].distance)} km away — verify stock levels)`,
   };
 }
-
 export function selectNearestWarehouse(destination: City, warehouses: Warehouse[]): Warehouse | null {
   if (!warehouses.length) return null;
   return warehouses.reduce((nearest, w) => {
@@ -333,4 +333,32 @@ function haversine(lat1: number, lon1: number, lat2: number, lon2: number): numb
     Math.cos((lat2 * Math.PI) / 180) *
     Math.sin(dLon / 2) ** 2;
   return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+}
+export async function loadDispatches() {
+  try {
+    const data = await apiFetch<any[]>("/dispatches");
+    return data.map((d) => ({
+      id: d.id,
+      warehouseId: d.warehouse_id,
+      warehouseName: d.warehouse_id,
+      route: null,
+      resources: {
+        food:      d.resources?.food      ?? 0,
+        water:     d.resources?.water     ?? 0,
+        medicine:  d.resources?.medicine  ?? 0,
+        firstAid:  d.resources?.first_aid ?? 0,
+      },
+      status: d.status ?? "pending",
+      eta: d.eta ?? "-",
+      timestamp: d.timestamp ?? new Date().toISOString(),
+      destination: d.destination,
+      currentPosition: undefined,
+    }));
+  } catch {
+    return [];
+  }
+}
+
+export async function updateDispatchStatus(id: string, newStatus: string): Promise<void> {
+  await apiFetch(`/dispatches/${id}/status?new_status=${newStatus}`, { method: "PUT" });
 }

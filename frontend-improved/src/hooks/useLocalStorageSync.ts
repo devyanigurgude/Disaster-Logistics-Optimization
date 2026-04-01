@@ -36,7 +36,6 @@ export function useLocalStorageSync() {
 
     const disasters = load<Disaster[]>(KEYS.disasters);
     const warehouses = load<Warehouse[]>(KEYS.warehouses);
-    const dispatches = load<Dispatch[]>(KEYS.dispatches);
     const logs = load<LogEntry[]>(KEYS.logs);
 
     if (disasters  && disasters.length  > 0) {
@@ -44,11 +43,6 @@ export function useLocalStorageSync() {
     }
     if (warehouses && warehouses.length > 0) {
       dispatch({ type: "SET_WAREHOUSES", payload: warehouses });
-    }
-    if (dispatches && dispatches.length > 0) {
-      dispatches.forEach((d) =>
-        dispatch({ type: "ADD_DISPATCH", payload: d })
-      );
     }
     if (logs && logs.length > 0) {
       // logs are stored newest-first, restore in reverse so ADD_LOG
@@ -69,11 +63,6 @@ export function useLocalStorageSync() {
     if (!initialized.current) return;
     save(KEYS.warehouses, state.warehouses);
   }, [state.warehouses]);
-
-  useEffect(() => {
-    if (!initialized.current) return;
-    save(KEYS.dispatches, state.dispatches);
-  }, [state.dispatches]);
 
   useEffect(() => {
     if (!initialized.current) return;

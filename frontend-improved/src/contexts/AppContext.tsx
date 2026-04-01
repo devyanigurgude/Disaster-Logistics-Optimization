@@ -14,6 +14,7 @@ export interface RouteSegment {
 
 export interface RouteData {
   path: RouteSegment[];
+  directPath?: RouteSegment[];
   distance: number;
   eta: string;
   safe: boolean;
@@ -185,8 +186,8 @@ const initialState: AppState = {
   destination: null,
   route: null,
   alternateRoute: null,
-  disasters: seedDisasters,
-  warehouses: seedWarehouses,
+  disasters: [],
+  warehouses: [],
   dispatches: [],
   logs: seedLogs,
   loading: { route: false, disasters: false, warehouses: false, dispatch: false },
