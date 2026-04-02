@@ -268,7 +268,7 @@ export default function LeafletMap({
       smoothed.forEach((c) => bounds.push(c));
     }
     // ── Direct (blocked) path — red dashed line ───────────────────────────────
-    if (state.route?.blocked && state.route.directPath && state.route.directPath.length > 0) {
+    if (state.route?.directPath && state.route.directPath.length > 0) {
       const directSmoothed = smoothPath(state.route.directPath);
       layers.addLayer(
         L.polyline(directSmoothed, {
@@ -277,13 +277,13 @@ export default function LeafletMap({
           opacity:   0.75,
           dashArray: "10 6",
         }).bindPopup(
-          "<strong>Original route — BLOCKED</strong><br/>Passes through active disaster zone"
+          `<strong>Original route</strong><br/>${state.route.directDistance || state.route.distance} km`
         )
       );
     }
 
-    // ── Safe detour — green line when route is blocked ────────────────────────
-    if (state.route?.blocked && state.route.path.length > 0) {
+    // ── Safe detour/path — green solid line ───────────────────────────────────
+    if (state.route?.path && state.route.path.length > 0) {
       const safeSmoothed = smoothPath(state.route.path);
       layers.addLayer(
         L.polyline(safeSmoothed, {
@@ -291,11 +291,11 @@ export default function LeafletMap({
           weight:  5,
           opacity: 0.9,
         }).bindPopup(
-          `<strong>Safe Detour</strong><br/>${state.route.distance} km · ETA: ${state.route.eta}<br/><small>Calculated by C++ optimizer</small>`
+          `<strong>Safe Route</strong><br/>${state.route.safeDistance || state.route.distance} km · ETA: ${state.route.eta}<br/><small>Disaster-free path by C++ A* optimizer</small>`
         )
       );
       safeSmoothed.forEach((c) => bounds.push(c));
-    } 
+    }
     // ── Alternate route ───────────────────────────────────────────────────────
     if (state.alternateRoute && state.alternateRoute.path.length > 0) {
       const smoothed = smoothPath(state.alternateRoute.path);

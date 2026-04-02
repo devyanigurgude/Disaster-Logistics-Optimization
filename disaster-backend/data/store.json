@@ -8,7 +8,7 @@
         "lat": 19.092952,
         "lon": 74.7493451
       },
-      "radius_km": 21.0,
+      "radius_km": 42.0,
       "status": "active",
       "description": "asdsacasc",
       "id": "3135442f-92a4-47c8-8e0c-57e41d8efbb4",
@@ -31,20 +31,20 @@
   ],
   "warehouses": [
     {
-      "name": "The helper",
+      "name": "Delhi",
       "location": {
-        "name": "Nagpur",
-        "lat": 21.1498134,
-        "lon": 79.0820556
+        "name": "New Delhi",
+        "lat": 28.6138954,
+        "lon": 77.2090057
       },
-      "capacity": 6276,
+      "capacity": 500,
       "current_stock": {
-        "food": 558395,
+        "food": 0,
         "water": 0,
-        "medicine": 0,
-        "first_aid": 0
+        "medicine": 150,
+        "first_aid": 303
       },
-      "id": "5ba95b65-3712-48b2-9d01-eaa347208a28"
+      "id": "9939dab7-bd6a-471e-b26b-b2bab73d214f"
     }
   ],
   "dispatches": [
@@ -426,6 +426,25 @@
       "id": "3649b6bc-9ede-47cd-a5e4-bdd4cdbfd704",
       "status": "pending",
       "timestamp": "2026-04-01T11:41:01.290731",
+      "eta": null
+    },
+    {
+      "warehouse_id": "9939dab7-bd6a-471e-b26b-b2bab73d214f",
+      "destination": {
+        "name": "Ahilyanagar",
+        "lat": 19.092952,
+        "lon": 74.7493451
+      },
+      "resources": {
+        "food": 100,
+        "water": 200,
+        "medicine": 50,
+        "first_aid": 30
+      },
+      "route_summary": "Delhi -> Ahilyanagar (4h 10m)",
+      "id": "13b2c3f3-e019-400d-b318-ad91e48cc302",
+      "status": "pending",
+      "timestamp": "2026-04-02T13:50:32.279007",
       "eta": null
     }
   ]

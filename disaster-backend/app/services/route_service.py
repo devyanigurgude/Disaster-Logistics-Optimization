@@ -230,10 +230,9 @@ def calculate_route(body) -> dict:
         "source":          {"lat": source_lat, "lon": source_lon},
         "destination":     {"lat": dest_lat,   "lon": dest_lon},
 
-        # ── Bonus fields for frontend visualization (add to RouteResponse) ────
-        # These let the frontend draw the red blocked line separately.
-        # See models.py patch below.
+        # ── Bonus fields for frontend visualization (ALWAYS include BOTH) ──────
         "direct_path":     direct_path_points,
+        "direct_distance_km": round(direct_dist, 1),
         "safe_path":       [{"lat": p[0], "lon": p[1]} for p in safe_path],
         "safe_distance_km": round(safe_dist, 1),
         "safe_duration_min": int(safe_dur),

@@ -106,7 +106,7 @@ export default function DashboardTab() {
             <div className="space-y-4">
               {state.warehouses.map((w) => {
                 const total = w.currentStock.food + w.currentStock.water + w.currentStock.medicine + w.currentStock.firstAid;
-                const pct   = Math.min(Math.round((total / (w.capacity * 4)) * 100), 100);
+                const pct   = w.capacity > 0 ? Math.min(Math.round((total / w.capacity) * 100), 100) : 0;
                 const bar   = pct > 60 ? "bg-emerald-500" : pct > 30 ? "bg-amber-500" : "bg-red-500";
                 return (
                   <div key={w.id}>

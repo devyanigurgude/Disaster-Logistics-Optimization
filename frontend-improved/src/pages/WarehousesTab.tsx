@@ -128,7 +128,8 @@ export default function WarehousesTab() {
             <p className="text-xl font-bold text-emerald-700">
               {state.warehouses.filter(w => {
                 const total = w.currentStock.food + w.currentStock.water + w.currentStock.medicine + w.currentStock.firstAid;
-                return (total / (w.capacity * 4)) > 0.3;
+                const pct = w.capacity > 0 ? Math.min(Math.round((total / w.capacity) * 100), 100) : 0;
+                return pct / 100 > 0.3;
               }).length}
             </p>
             <p className="text-xs font-medium text-emerald-600 mt-0.5">Well Stocked</p>
@@ -137,7 +138,8 @@ export default function WarehousesTab() {
             <p className="text-xl font-bold text-amber-700">
               {state.warehouses.filter(w => {
                 const total = w.currentStock.food + w.currentStock.water + w.currentStock.medicine + w.currentStock.firstAid;
-                return (total / (w.capacity * 4)) <= 0.3;
+                const pct = w.capacity > 0 ? Math.min(Math.round((total / w.capacity) * 100), 100) : 0;
+                return pct / 100 <= 0.3;
               }).length}
             </p>
             <p className="text-xs font-medium text-amber-600 mt-0.5">Low Stock</p>
@@ -161,7 +163,7 @@ export default function WarehousesTab() {
           <div className="space-y-2">
             {state.warehouses.map((w) => {
               const total = w.currentStock.food + w.currentStock.water + w.currentStock.medicine + w.currentStock.firstAid;
-              const pct = Math.min(Math.round((total / (w.capacity * 4)) * 100), 100);
+              const pct = w.capacity > 0 ? Math.min(Math.round((total / w.capacity) * 100), 100) : 0;
               const barColor = pct > 60 ? "bg-emerald-500" : pct > 30 ? "bg-amber-500" : "bg-red-500";
               const isExpanded = expandedId === w.id;
 
@@ -177,7 +179,7 @@ export default function WarehousesTab() {
                         <span className="text-sm font-semibold text-foreground truncate">{w.name}</span>
                       </div>
                       <p className="text-xs text-muted-foreground mt-0.5 ml-6">
-                        {w.location.name} · {total.toLocaleString()} / {(w.capacity * 4).toLocaleString()} units
+                        {w.location.name} · {total.toLocaleString()} / {w.capacity.toLocaleString()} units
                       </p>
                     </button>
                     <div className="flex items-center gap-1 shrink-0">

@@ -98,28 +98,28 @@ class RouteRequest(BaseModel):
 class PathPoint(BaseModel):
     lat: float
     lon: float
+from typing import Optional, List
 
 class RouteResponse(BaseModel):
-    # ── Core fields (always present) ─────────────────────────────────────────
-    status:          str                  # "ok" | "no_safe_path"
-    path:            List[PathPoint]      # The SAFE path to follow (green line)
-    distance_km:     float
-    duration_min:    int
-    eta:             str
-    blocked:         bool                 # True if direct route hits a disaster
-    penalty_applied: bool                 # Always False (hard blocking, no penalties)
-    nodes_explored:  int
-    source:          Coordinates
-    destination:     Coordinates
+    status: str
+    path: List[dict]
+    distance_km: float
+    duration_min: int
+    eta: str
+    blocked: bool
+    penalty_applied: bool
+    nodes_explored: int
+    source: dict
+    destination: dict
 
-    # ── Bonus visualization fields (present when blocked=True) ───────────────
-    # direct_path  = the original blocked route → draw as RED dashed line
-    # safe_path    = the safe detour            → same as `path`, for convenience
-    direct_path:        List[PathPoint] = []
-    safe_path:          List[PathPoint] = []
-    safe_distance_km:   float           = 0.0
-    safe_duration_min:  int             = 0
+    # 🔥 ADD THESE (VERY IMPORTANT)
+    direct_distance_km: Optional[float] = None
+    safe_distance_km: Optional[float] = None
+    direct_path: Optional[List[dict]] = None
+    safe_path: Optional[List[dict]] = None
+    safe_duration_min: Optional[int] = None
 
+    
     class Config:
         use_enum_values = True
         # Allow extra fields from C++ output without crashing

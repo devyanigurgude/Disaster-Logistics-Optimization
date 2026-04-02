@@ -15,7 +15,10 @@ export interface RouteSegment {
 export interface RouteData {
   path: RouteSegment[];
   directPath?: RouteSegment[];
+  safePath?: RouteSegment[];
   distance: number;
+  directDistance: number;
+  safeDistance: number;
   eta: string;
   safe: boolean;
   blocked: boolean;

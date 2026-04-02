@@ -11,9 +11,14 @@ type BackendRoutePoint = { lat: number; lon: number };
 type BackendRouteResponse = {
   path: BackendRoutePoint[];
   direct_path?: BackendRoutePoint[];
+  safe_path?: BackendRoutePoint[];
   distance_km: number;
+  direct_distance_km?: number;
+  safe_distance_km?: number;
   eta: string;
   blocked: boolean;
+  direct_duration_min?: number;
+  safe_duration_min?: number;
 };
 
 function formatEta(isoString: string): string {
@@ -88,29 +93,51 @@ export async function fetchRoute(
     destination: { lat: destination.lat, lon: destination.lon },
   };
 
-  const data = await apiFetch<BackendRouteResponse>("/route", {
+  const data = await apiFetch<any>("/route", {
     method: "POST",
     body: JSON.stringify(body),
   });
 
-  const path: RouteSegment[] = data.path.map((p) => ({
+  console.log("Backend route data:", {
+    direct_distance_km: data.direct_distance_km,
+    safe_distance_km: data.safe_distance_km,
+    distance_km: data.distance_km,
+    blocked: data.blocked,
+    direct_path: data.direct_path?.length,
+    safe_path: data.safe_path?.length,
+    path: data.path?.length,
+  });
+
+  // Backend returns safe path as primary `path`, direct/blocked as `direct_path`
+  const path: RouteSegment[] = (data.path || []).map((p: any) => ({
     lat: p.lat,
     lon: p.lon,
   }));
 
-  const directPath: RouteSegment[] = (data.direct_path ?? []).map((p) => ({
+  const directPath: RouteSegment[] = (data.direct_path || path).map((p: any) => ({
     lat: p.lat,
     lon: p.lon,
   }));
+
+  const safePath: RouteSegment[] = (data.safe_path || path).map((p: any) => ({
+    lat: p.lat,
+    lon: p.lon,
+  }));
+
+  const directDistance = Math.round((data.direct_distance_km || data.distance_km || 0));
+  const safeDistance = Math.round((data.safe_distance_km || data.distance_km || 0));
 
   return {
-    path,
+    path: data.blocked ? safePath : path,
     directPath,
-    distance: Math.round(data.distance_km),
-    eta: formatEta(data.eta),
-    safe: !data.blocked,
-    blocked: data.blocked,
-    alternateAvailable: false,
+    safePath,
+    directDistance,
+    safeDistance,
+    distance: safeDistance,  // chosen/primary
+    eta: formatEta(data.eta || ""),
+    safe: data.status === "ok" && !data.blocked,
+    blocked: !!data.blocked,
+    alternateAvailable: data.blocked && !!data.safe_path && data.safe_path.length > 0,
   };
 }
 
@@ -241,6 +268,8 @@ export function selectBestWarehouse(
   const scored = warehouses
     .map((w) => {
       const distance = haversine(destination.lat, destination.lon, w.location.lat, w.location.lon);
+      const totalStock = w.currentStock.food + w.currentStock.water + w.currentStock.medicine + w.currentStock.firstAid;
+      const stockFill = w.capacity > 0 ? totalStock / w.capacity : 0;
       const hasResources =
         w.currentStock.food >= required.food &&
         w.currentStock.water >= required.water &&
@@ -251,35 +280,59 @@ export function selectBestWarehouse(
         w.currentStock.water > 0 ||
         w.currentStock.medicine > 0 ||
         w.currentStock.firstAid > 0;
-      return { warehouse: w, distance, hasResources, hasAnyStock };
+      const safetyPenalty = 0; // Future: integrate route.blocked or disaster proximity
+      const score = (distance * 0.6) - (stockFill * 100 * 0.4) + safetyPenalty;
+      return { warehouse: w, distance, stockFill, hasResources, hasAnyStock, score };
     })
-    .sort((a, b) => a.distance - b.distance); // always sort by distance first
+    .sort((a, b) => a.score - b.score); // Lower score better
 
-  // Priority 1: nearest warehouse that has enough of everything
-  const fullyEligible = scored.filter((s) => s.hasResources);
-  if (fullyEligible.length > 0) {
+  const PROXIMITY_MAX_KM = 500;
+
+  // Priority 1: Full stock within 500km (score-sorted)
+  const fullProximal = scored.filter(s => s.distance <= PROXIMITY_MAX_KM && s.hasResources);
+  if (fullProximal.length > 0) {
     return {
-      best:         fullyEligible[0].warehouse,
-      alternatives: fullyEligible.slice(1).map((e) => e.warehouse),
-      reason:       `Nearest warehouse with sufficient resources (${Math.round(fullyEligible[0].distance)} km away)`,
+      best: fullProximal[0].warehouse,
+      alternatives: fullProximal.slice(1).map(e => e.warehouse),
+      reason: `Best warehouse within 500km with full resources (${Math.round(fullProximal[0].distance)} km, ${Math.round(fullProximal[0].stockFill * 100)}% fill)`,
     };
   }
 
-  // Priority 2: nearest warehouse that has at least some stock
-  const partiallyEligible = scored.filter((s) => s.hasAnyStock);
-  if (partiallyEligible.length > 0) {
+  // Priority 2: Partial stock within 500km
+  const partialProximal = scored.filter(s => s.distance <= PROXIMITY_MAX_KM && s.hasAnyStock && !s.hasResources);
+  if (partialProximal.length > 0) {
     return {
-      best:         partiallyEligible[0].warehouse,
-      alternatives: partiallyEligible.slice(1).map((e) => e.warehouse),
-      reason:       `Nearest warehouse with partial stock (${Math.round(partiallyEligible[0].distance)} km away — some resources may be insufficient)`,
+      best: partialProximal[0].warehouse,
+      alternatives: partialProximal.slice(1).map(e => e.warehouse),
+      reason: `Best partial-stock warehouse within 500km (${Math.round(partialProximal[0].distance)} km, ${Math.round(partialProximal[0].stockFill * 100)}% fill)`,
     };
   }
 
-  // Priority 3: just pick the nearest one
+  // Priority 3: Full stock any distance
+  const fullAny = scored.filter(s => s.hasResources);
+  if (fullAny.length > 0) {
+    return {
+      best: fullAny[0].warehouse,
+      alternatives: fullAny.slice(1).map(e => e.warehouse),
+      reason: `Best full-stock warehouse (${Math.round(fullAny[0].distance)} km away, ${Math.round(fullAny[0].stockFill * 100)}% fill) — beyond 500km proximity`,
+    };
+  }
+
+  // Priority 4: Partial stock any distance
+  const partialAny = scored.filter(s => s.hasAnyStock && !s.hasResources);
+  if (partialAny.length > 0) {
+    return {
+      best: partialAny[0].warehouse,
+      alternatives: partialAny.slice(1).map(e => e.warehouse),
+      reason: `Best available partial-stock warehouse (${Math.round(partialAny[0].distance)} km, ${Math.round(partialAny[0].stockFill * 100)}% fill)`,
+    };
+  }
+
+  // Fallback: nearest regardless
   return {
-    best:         scored[0].warehouse,
-    alternatives: scored.slice(1).map((s) => s.warehouse),
-    reason:       `Nearest warehouse selected (${Math.round(scored[0].distance)} km away — verify stock levels)`,
+    best: scored[0]?.warehouse ?? null,
+    alternatives: scored.slice(1).map(s => s.warehouse),
+    reason: `Nearest warehouse selected (${Math.round(scored[0]?.distance ?? 0)} km) — low/no stock warning`,
   };
 }
 export function selectNearestWarehouse(destination: City, warehouses: Warehouse[]): Warehouse | null {

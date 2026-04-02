@@ -53,11 +53,19 @@ function isRouteActuallySafe(path: RouteSegment[], disasters: Disaster[]): boole
   return true;
 }
 
+interface RouteInfoProps {
+  label: string;
+  distance: number;
+  eta: string;
+  blocked: boolean;
+  isAlternate?: boolean;
+  deltaKm?: number;
+  deltaPercent?: string;
+}
+
 function RouteInfoCard({
-  label, route, blocked, isAlternate,
-}: {
-  label: string; route: RouteData; blocked: boolean; isAlternate?: boolean;
-}) {
+  label, distance, eta, blocked, isAlternate, deltaKm, deltaPercent,
+}: RouteInfoProps) {
   return (
     <div className={`rounded-xl border-2 p-4 ${
       blocked
@@ -87,13 +95,13 @@ function RouteInfoCard({
       <div className="grid grid-cols-3 gap-2">
         <div className="text-center bg-white/60 rounded-lg py-2 px-1">
           <p className={`text-lg font-bold ${blocked ? "text-red-600" : "text-emerald-700"}`}>
-            {route.distance} km
+            {distance.toLocaleString()} km
           </p>
           <p className="text-[10px] font-bold uppercase tracking-wide text-muted-foreground mt-0.5">Distance</p>
         </div>
         <div className="text-center bg-white/60 rounded-lg py-2 px-1">
           <p className={`text-lg font-bold ${blocked ? "text-red-600" : "text-emerald-700"}`}>
-            {route.eta}
+            {eta}
           </p>
           <p className="text-[10px] font-bold uppercase tracking-wide text-muted-foreground mt-0.5">ETA</p>
         </div>
@@ -105,6 +113,14 @@ function RouteInfoCard({
         </div>
       </div>
 
+      {deltaKm !== undefined && deltaPercent && (
+        <div className="mt-2 p-2 bg-gradient-to-r from-emerald-100 to-blue-100 rounded-lg border">
+          <p className="text-sm font-semibold text-emerald-800">
+            +{deltaKm.toLocaleString()} km ({deltaPercent} longer)
+          </p>
+        </div>
+      )}
+
       {blocked && (
         <div className="mt-3 flex items-center gap-2 rounded-lg bg-red-100 border border-red-200 px-3 py-2 text-xs text-red-700 font-medium">
           <AlertTriangle className="h-3.5 w-3.5 shrink-0" />
@@ -114,7 +130,7 @@ function RouteInfoCard({
       {isAlternate && (
         <div className="mt-3 flex items-center gap-2 rounded-lg bg-emerald-100 border border-emerald-200 px-3 py-2 text-xs text-emerald-700 font-medium">
           <CheckCircle className="h-3.5 w-3.5 shrink-0" />
-          Safe detour calculated by C++ optimizer
+          Safe detour calculated by C++ optimizer (sum of path edges)
         </div>
       )}
     </div>
@@ -251,32 +267,57 @@ export default function RouteOperationsTab() {
           <section className="space-y-3">
             <h3 className="section-title">Route Result</h3>
 
-            {state.route.blocked ? (
-              <>
-                <RouteInfoCard
-                  label="Original Route — Blocked"
-                  route={state.route}
-                  blocked={true}
-                />
-                <RouteInfoCard
-                  label="Safe Detour (Recommended)"
-                  route={state.route}
-                  blocked={false}
-                  isAlternate={true}
-                />
-              </>
-            ) : (
-              <RouteInfoCard
-                label="Primary Route — Safe"
-                route={state.route}
-                blocked={false}
-              />
+            {state.route && (
+              (() => {
+                const originalDistance = state.route.directDistance || state.route.distance;
+                const safeDistance = state.route.safeDistance || state.route.distance;
+                const deltaKm = safeDistance - originalDistance;
+                const deltaPercent = deltaKm > 0 ? ((deltaKm / originalDistance) * 100).toFixed(1) + "%" : "0%";
+
+                console.log("Route distances:", {
+                  originalDistance,
+                  safeDistance,
+                  deltaKm,
+                  blocked: state.route.blocked,
+                });
+
+                if (state.route.blocked) {
+                  return (
+                    <>
+                      <RouteInfoCard
+                        label="Original Route — Blocked"
+                        distance={originalDistance}
+                        eta={state.route.eta}
+                        blocked={true}
+                      />
+                      <RouteInfoCard
+                        label="Safe Detour (Recommended)"
+                        distance={safeDistance}
+                        eta={state.route.eta}
+                        blocked={false}
+                        isAlternate={true}
+                        deltaKm={deltaKm}
+                        deltaPercent={deltaPercent}
+                      />
+                    </>
+                  );
+                } else {
+                  return (
+                    <RouteInfoCard
+                      label="Primary Route — Safe"
+                      distance={originalDistance}
+                      eta={state.route.eta}
+                      blocked={false}
+                    />
+                  );
+                }
+              })()
             )}
 
-            {state.route.blocked && (
+            {state.route?.blocked && (
               <div className="flex items-start gap-2 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2.5 text-xs text-amber-800">
                 <Info className="mt-0.5 h-3.5 w-3.5 shrink-0" />
-                Red dashed line = blocked original path. Green line = safe detour.
+                Red dashed = original (blocked), Green solid = safe detour. Distances now show path sums!
               </div>
             )}
           </section>
