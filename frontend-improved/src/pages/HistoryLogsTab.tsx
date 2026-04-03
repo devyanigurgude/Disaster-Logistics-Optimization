@@ -1,4 +1,4 @@
-import { useState } from "react";
+﻿import { useState } from "react";
 import { useAppContext } from "@/contexts/AppContext";
 import { History, Route, AlertTriangle, Truck, Monitor, Trash2, Download } from "lucide-react";
 
@@ -61,7 +61,8 @@ export default function HistoryLogsTab() {
   };
 
   return (
-    <div className="p-6 space-y-5 h-[calc(100vh-112px)] overflow-y-auto">
+    <div className="h-[calc(100vh-112px)] overflow-y-auto">
+      <div className="tab-shell space-y-6">
 
       {/* Header */}
       <div className="flex items-center justify-between">
@@ -116,8 +117,8 @@ export default function HistoryLogsTab() {
                 onClick={() => setTypeFilter(t)}
                 className={`rounded-lg px-3 py-1 text-xs font-semibold capitalize transition-colors ${
                   typeFilter === t
-                    ? "bg-primary text-primary-foreground"
-                    : "bg-muted text-muted-foreground hover:text-foreground"
+                    ? "bg-black text-white"
+                    : "bg-gray-100 text-gray-700 hover:bg-gray-200"
                 }`}
               >
                 {t}
@@ -134,8 +135,8 @@ export default function HistoryLogsTab() {
                 onClick={() => setStatusFilter(s)}
                 className={`rounded-lg px-3 py-1 text-xs font-semibold capitalize transition-colors ${
                   statusFilter === s
-                    ? "bg-primary text-primary-foreground"
-                    : "bg-muted text-muted-foreground hover:text-foreground"
+                    ? "bg-black text-white"
+                    : "bg-gray-100 text-gray-700 hover:bg-gray-200"
                 }`}
               >
                 {s}
@@ -173,7 +174,7 @@ export default function HistoryLogsTab() {
           <div className="overflow-x-auto">
             <table className="w-full text-sm min-w-[700px]">
               <thead>
-                <tr className="border-b bg-muted/50">
+                <tr className="border-b border-black/5 bg-white/50">
                   {["Timestamp", "Type", "Message", "Status"].map((h) => (
                     <th
                       key={h}
@@ -206,9 +207,20 @@ export default function HistoryLogsTab() {
                       <p className="line-clamp-2 text-sm">{log.message}</p>
                     </td>
                     <td className="px-4 py-3 whitespace-nowrap">
-                      <span className={statusBadge[log.status] ?? "status-badge-neutral"}>
-                        {log.status}
-                      </span>
+                      <div className="flex items-center gap-2">
+                        <span
+                          className={`h-2 w-2 rounded-full ${
+                            log.status === "error"
+                              ? "bg-red-500"
+                              : log.status === "warning"
+                              ? "bg-yellow-500"
+                              : log.status === "success"
+                              ? "bg-green-500"
+                              : "bg-blue-500"
+                          }`}
+                        />
+                        <span className={statusBadge[log.status] ?? "status-badge-neutral"}>{log.status}</span>
+                      </div>
                     </td>
                   </tr>
                 ))}
@@ -220,6 +232,8 @@ export default function HistoryLogsTab() {
           </div>
         </div>
       )}
+      </div>
     </div>
   );
 }
+

@@ -234,6 +234,7 @@ export default function LeafletMap({
             weight:    5,
             opacity:   0.85,
             dashArray: "12 6",
+            className: "route-blocked",
           }).bindPopup(
             `<strong>🚫 Primary Route — BLOCKED</strong><br/>` +
             `${state.route.distance} km · ETA: ${state.route.eta}<br/>` +
@@ -258,6 +259,7 @@ export default function LeafletMap({
             color:   "#16a34a",
             weight:  5,
             opacity: 0.9,
+            className: "route-safe",
           }).bindPopup(
             `<strong>✅ Primary Route — Safe</strong><br/>` +
             `${state.route.distance} km · ETA: ${state.route.eta}`
@@ -276,6 +278,7 @@ export default function LeafletMap({
           weight:    4,
           opacity:   0.75,
           dashArray: "10 6",
+          className: "route-blocked",
         }).bindPopup(
           `<strong>Original route</strong><br/>${state.route.directDistance || state.route.distance} km`
         )
@@ -290,6 +293,7 @@ export default function LeafletMap({
           color:   "#16a34a",
           weight:  5,
           opacity: 0.9,
+          className: "route-safe",
         }).bindPopup(
           `<strong>Safe Route</strong><br/>${state.route.safeDistance || state.route.distance} km · ETA: ${state.route.eta}<br/><small>Disaster-free path by C++ A* optimizer</small>`
         )
@@ -305,6 +309,7 @@ export default function LeafletMap({
           color:   "#16a34a",
           weight:  5,
           opacity: 0.9,
+          className: "route-safe",
         }).bindPopup(
           `<strong>✅ Safe Alternate Route</strong><br/>` +
           `${state.alternateRoute.distance} km · ETA: ${state.alternateRoute.eta}<br/>` +
@@ -387,17 +392,22 @@ export default function LeafletMap({
             }, bounds);
           }
         
-         if (
+        if (
           dispatchItem.currentPosition &&
           dispatchItem.status === "in_transit" &&
           typeof dispatchItem.currentPosition.lat === "number" &&
           typeof dispatchItem.currentPosition.lon === "number"
         ) {
           layers.addLayer(
-            L.circleMarker(
-              [dispatchItem.currentPosition.lat, dispatchItem.currentPosition.lon],   ).bindPopup(
+            L.circleMarker([dispatchItem.currentPosition.lat, dispatchItem.currentPosition.lon], {
+              radius: 7,
+              color: "#2563eb",
+              fillColor: "#2563eb",
+              fillOpacity: 0.9,
+              weight: 2,
+            }).bindPopup(
               `<strong>${dispatchItem.warehouseName}</strong><br/>` +
-              `-> ${dispatchItem.destination.name}<br/>` +
+              `→ ${dispatchItem.destination.name}<br/>` +
               `Status: ${dispatchItem.status}<br/>ETA: ${dispatchItem.eta}`
             )
           );
@@ -408,9 +418,14 @@ export default function LeafletMap({
 
     // ── Fit map to content ────────────────────────────────────────────────────
     if (bounds.length >= 2) {
-      mapRef.current.fitBounds(L.latLngBounds(bounds), { padding: [50, 50], maxZoom: 14 });
+      mapRef.current.flyToBounds(L.latLngBounds(bounds), {
+        padding: [50, 50],
+        maxZoom: 14,
+        animate: true,
+        duration: 1.25,
+      });
     } else if (bounds.length === 1) {
-      mapRef.current.setView(bounds[0], 9);
+      mapRef.current.flyTo(bounds[0], 9, { animate: true, duration: 1.1 });
     }
   }, [
     state.source,
@@ -427,7 +442,8 @@ export default function LeafletMap({
 
   return (
     <div className="relative w-full h-full">
-      <div ref={containerRef} className="absolute inset-0 rounded-lg border" />
+      <div ref={containerRef} className="absolute inset-0 rounded-2xl ring-1 ring-black/5" />
     </div>
   );
 }
+

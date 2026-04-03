@@ -1,4 +1,4 @@
-import { useState } from "react";
+﻿﻿import { useState } from "react";
 import { Plus, Pencil, Trash2, MapPin, ChevronDown, ChevronUp, Warehouse as WarehouseIcon } from "lucide-react";
 import LeafletMap from "@/components/LeafletMap";
 import CitySearch from "@/components/CitySearch";
@@ -92,68 +92,73 @@ export default function WarehousesTab() {
   );
 
   return (
-    <div className="flex h-[calc(100vh-112px)] overflow-hidden">
-      {/* Map */}
-      <div className="w-[65%] min-w-0 p-3">
-        <LeafletMap className="h-full w-full" />
-      </div>
-
-      {/* Panel */}
-      <div className="w-[35%] shrink-0 overflow-y-auto border-l bg-card p-5 space-y-4">
-
-        {/* Header */}
-        <div className="flex items-center justify-between">
-          <div>
-            <h2 className="text-base font-bold text-foreground">Warehouses</h2>
-            <p className="text-xs text-muted-foreground mt-0.5">
-              {state.warehouses.length} configured · {totalStockAll.toLocaleString()} total units
-            </p>
+    <div className="h-[calc(100vh-112px)]">
+      <div className="tab-shell h-full overflow-y-auto lg:overflow-hidden">
+        <div className="grid h-full grid-cols-1 grid-rows-[45vh_auto] gap-4 lg:grid-cols-4 lg:grid-rows-[1fr]">
+          {/* Map */}
+          <div className="min-w-0 min-h-0 lg:col-span-3">
+            <div className="stat-card h-full p-3">
+              <LeafletMap className="h-full w-full" />
+            </div>
           </div>
-          <button
-            onClick={() => { resetForm(); setShowForm(!showForm); }}
-            className="flex items-center gap-2 rounded-md bg-primary px-3 py-2 text-sm font-medium text-primary-foreground shadow-sm transition-all hover:opacity-90 active:scale-[0.98]"
-          >
-            <Plus className="h-4 w-4" />
-            Add Warehouse
-          </button>
-        </div>
+
+          {/* Panel */}
+          <div className="min-w-0 min-h-0 lg:col-span-1 space-y-6 overflow-visible lg:overflow-y-auto pr-1">
+
+            {/* Header */}
+            <div className="stat-card flex items-start justify-between gap-4">
+              <div className="min-w-0">
+                <h2 className="page-title">Warehouses</h2>
+                <p className="mt-1 text-sm text-gray-500">
+                  {state.warehouses.length} configured · {totalStockAll.toLocaleString()} total units
+                </p>
+              </div>
+              <button
+                onClick={() => { resetForm(); setShowForm(!showForm); }}
+                className="btn-primary whitespace-nowrap"
+              >
+                <Plus className="h-4 w-4" />
+                Add
+              </button>
+            </div>
+          
 
         {/* Summary stat cards */}
-        <div className="grid grid-cols-3 gap-2">
-          <div className="rounded-lg border bg-blue-50 border-blue-200 px-3 py-2.5 text-center">
-            <p className="text-xl font-bold text-blue-700">{state.warehouses.length}</p>
-            <p className="text-xs font-medium text-blue-600 mt-0.5">Total</p>
+        <div className="grid grid-cols-3 gap-4">
+          <div className="stat-card p-4 text-center">
+            <p className="text-2xl font-bold text-blue-600">{state.warehouses.length}</p>
+            <p className="mt-1 text-xs text-gray-400">Total</p>
           </div>
-          <div className="rounded-lg border bg-emerald-50 border-emerald-200 px-3 py-2.5 text-center">
-            <p className="text-xl font-bold text-emerald-700">
+          <div className="stat-card p-4 text-center">
+            <p className="text-2xl font-bold text-green-600">
               {state.warehouses.filter(w => {
                 const total = w.currentStock.food + w.currentStock.water + w.currentStock.medicine + w.currentStock.firstAid;
                 const pct = w.capacity > 0 ? Math.min(Math.round((total / w.capacity) * 100), 100) : 0;
                 return pct / 100 > 0.3;
               }).length}
             </p>
-            <p className="text-xs font-medium text-emerald-600 mt-0.5">Well Stocked</p>
+            <p className="mt-1 text-xs text-gray-400">Well Stocked</p>
           </div>
-          <div className="rounded-lg border bg-amber-50 border-amber-200 px-3 py-2.5 text-center">
-            <p className="text-xl font-bold text-amber-700">
+          <div className="stat-card p-4 text-center">
+            <p className="text-2xl font-bold text-red-600">
               {state.warehouses.filter(w => {
                 const total = w.currentStock.food + w.currentStock.water + w.currentStock.medicine + w.currentStock.firstAid;
                 const pct = w.capacity > 0 ? Math.min(Math.round((total / w.capacity) * 100), 100) : 0;
                 return pct / 100 <= 0.3;
               }).length}
             </p>
-            <p className="text-xs font-medium text-amber-600 mt-0.5">Low Stock</p>
+            <p className="mt-1 text-xs text-gray-400">Low Stock</p>
           </div>
         </div>
 
         {/* Warehouse list */}
         {state.warehouses.length === 0 ? (
-          <div className="flex flex-col items-center justify-center rounded-lg border border-dashed py-12 text-center">
+          <div className="stat-card flex flex-col items-center justify-center py-12 text-center">
             <WarehouseIcon className="h-10 w-10 text-muted-foreground/30 mb-3" />
             <p className="text-sm text-muted-foreground">No warehouses configured.</p>
             <button
               onClick={() => setShowForm(true)}
-              className="mt-3 flex items-center gap-1.5 rounded-md bg-primary px-3 py-1.5 text-xs font-medium text-primary-foreground hover:opacity-90"
+              className="btn-primary mt-4"
             >
               <Plus className="h-3.5 w-3.5" />
               Add First Warehouse
@@ -164,23 +169,38 @@ export default function WarehousesTab() {
             {state.warehouses.map((w) => {
               const total = w.currentStock.food + w.currentStock.water + w.currentStock.medicine + w.currentStock.firstAid;
               const pct = w.capacity > 0 ? Math.min(Math.round((total / w.capacity) * 100), 100) : 0;
-              const barColor = pct > 60 ? "bg-emerald-500" : pct > 30 ? "bg-amber-500" : "bg-red-500";
+              const barColor = "bg-blue-500";
               const isExpanded = expandedId === w.id;
+              const stockBadge =
+                pct > 60
+                  ? { label: "Well stocked", cls: "bg-green-50 text-green-600" }
+                  : pct > 30
+                  ? { label: "Medium", cls: "bg-yellow-50 text-yellow-600" }
+                  : { label: "Low stock", cls: "bg-red-50 text-red-600" };
 
               return (
-                <div key={w.id} className="rounded-lg border bg-background hover:shadow-sm transition-shadow">
-                  <div className="flex items-center justify-between gap-2 p-3.5">
+                <div key={w.id} className="stat-card">
+                  <div className="flex items-start justify-between gap-3">
                     <button
                       className="flex-1 text-left min-w-0"
                       onClick={() => setExpandedId(isExpanded ? null : w.id)}
                     >
                       <div className="flex items-center gap-2">
                         <WarehouseIcon className="h-4 w-4 text-amber-600 shrink-0" />
-                        <span className="text-sm font-semibold text-foreground truncate">{w.name}</span>
+                        <span className="text-sm font-semibold text-gray-800 truncate">{w.name}</span>
+                        <span className={`ml-2 rounded-full px-3 py-1 text-xs font-semibold ${stockBadge.cls}`}>
+                          {stockBadge.label}
+                        </span>
                       </div>
-                      <p className="text-xs text-muted-foreground mt-0.5 ml-6">
-                        {w.location.name} · {total.toLocaleString()} / {w.capacity.toLocaleString()} units
-                      </p>
+                      <p className="mt-1 text-sm text-gray-500 ml-6 truncate">{w.location.name}</p>
+                      <div className="mt-2 ml-6 flex items-center justify-between gap-3 text-sm text-gray-600">
+                        <span>
+                          Stock <span className="font-semibold text-gray-800">{total.toLocaleString()}</span>
+                          {" "}/{" "}
+                          <span className="font-semibold text-gray-800">{w.capacity.toLocaleString()}</span>
+                        </span>
+                        <span className="text-xs text-gray-400">{pct}%</span>
+                      </div>
                     </button>
                     <div className="flex items-center gap-1 shrink-0">
                       {state.destination && (
@@ -190,20 +210,20 @@ export default function WarehousesTab() {
                       )}
                       <button
                         onClick={() => setExpandedId(isExpanded ? null : w.id)}
-                        className="rounded p-1.5 text-muted-foreground hover:bg-muted transition-colors"
+                        className="rounded-full bg-gray-100 p-2 text-gray-600 hover:bg-gray-200 transition-colors"
                       >
                         {isExpanded ? <ChevronUp className="h-3.5 w-3.5" /> : <ChevronDown className="h-3.5 w-3.5" />}
                       </button>
                       <button
                         onClick={() => handleEdit(w)}
-                        className="rounded p-1.5 text-muted-foreground hover:bg-muted hover:text-foreground transition-colors"
+                        className="rounded-full bg-gray-100 p-2 text-gray-600 hover:bg-gray-200 hover:text-gray-800 transition-colors"
                         title="Edit"
                       >
                         <Pencil className="h-3.5 w-3.5" />
                       </button>
                       <button
                         onClick={() => handleDelete(w)}
-                        className="rounded p-1.5 text-muted-foreground hover:bg-destructive/10 hover:text-destructive transition-colors"
+                        className="rounded-full bg-gray-100 p-2 text-gray-600 hover:bg-red-50 hover:text-destructive transition-colors"
                         title="Delete"
                       >
                         <Trash2 className="h-3.5 w-3.5" />
@@ -212,30 +232,30 @@ export default function WarehousesTab() {
                   </div>
 
                   {/* Stock bar */}
-                  <div className="px-3.5 pb-2">
-                    <div className="h-1.5 rounded-full bg-muted overflow-hidden">
+                  <div className="mt-4">
+                    <div className="h-2 rounded-full bg-gray-100 overflow-hidden">
                       <div
                         className={`h-full rounded-full transition-all ${barColor}`}
                         style={{ width: `${pct}%` }}
                       />
                     </div>
-                    <p className="text-[10px] text-muted-foreground mt-0.5">{pct}% stocked</p>
+                    <p className="mt-1 text-xs text-gray-400">{pct}% stocked</p>
                   </div>
 
                   {/* Expanded stock detail */}
                   {isExpanded && (
-                    <div className="border-t px-3.5 py-3 bg-muted/20">
+                    <div className="mt-4 rounded-2xl bg-white/70 px-4 py-4 ring-1 ring-black/5">
                       <div className="grid grid-cols-4 gap-3 mb-3">
                         {(["food", "water", "medicine", "firstAid"] as const).map((key) => (
                           <div key={key} className="text-center">
-                            <p className="text-[10px] uppercase text-muted-foreground font-medium">
+                            <p className="text-[10px] uppercase text-gray-400 font-semibold tracking-wide">
                               {key === "firstAid" ? "Aid" : key}
                             </p>
-                            <p className="text-sm font-bold text-foreground">{w.currentStock[key].toLocaleString()}</p>
+                            <p className="text-sm font-bold text-gray-800">{w.currentStock[key].toLocaleString()}</p>
                           </div>
                         ))}
                       </div>
-                      <div className="flex items-center gap-1 text-[11px] text-muted-foreground border-t pt-2">
+                      <div className="flex items-center gap-1 text-[11px] text-gray-500 border-t border-black/5 pt-3">
                         <MapPin className="h-3 w-3" />
                         {w.location.lat.toFixed(4)}, {w.location.lon.toFixed(4)} · Cap: {w.capacity.toLocaleString()}
                       </div>
@@ -248,10 +268,10 @@ export default function WarehousesTab() {
         )}
 
         {/* Add / Edit Form — collapsible at bottom */}
-        <div className="rounded-lg border bg-muted/20 overflow-hidden">
+        <div className="stat-card overflow-hidden p-0">
           <button
             onClick={() => setShowForm(!showForm)}
-            className="flex w-full items-center justify-between px-4 py-3 text-sm font-semibold text-foreground hover:bg-muted/40 transition-colors"
+            className="flex w-full items-center justify-between px-4 py-3 text-sm font-semibold text-foreground hover:bg-gray-50 transition-colors"
           >
             <span className="flex items-center gap-2">
               <Plus className="h-4 w-4 text-primary" />
@@ -333,8 +353,10 @@ export default function WarehousesTab() {
             </div>
           )}
         </div>
-
       </div>
     </div>
+  </div>
+</div>
   );
 }
+

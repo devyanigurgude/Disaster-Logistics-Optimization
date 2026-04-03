@@ -2,7 +2,7 @@
 // Routes go through the Python/C++ backend.
 // Disasters & warehouses are synced with the backend on load and on mutation.
 
-import { City, RouteData, RouteSegment, Disaster, Warehouse } from "@/contexts/AppContext";
+import { City, RouteData, RouteSegment, Disaster, Warehouse, Dispatch } from "@/contexts/AppContext";
 
 // export const API_BASE = "/api";
 const API_BASE = "http://localhost:8000/api";
@@ -241,8 +241,8 @@ export async function createDispatch(payload: {
   destination: City;
   resources: { food: number; water: number; medicine: number; firstAid: number };
   route_summary?: string;
-}): Promise<void> {
-  await apiFetch("/dispatches", {
+}): Promise<Dispatch> {
+  const created = await apiFetch<any>("/dispatches", {
     method: "POST",
     body: JSON.stringify({
       warehouse_id:  payload.warehouse_id,
@@ -255,6 +255,24 @@ export async function createDispatch(payload: {
       }, route_summary: payload.route_summary ?? null,
     }),
   });
+
+  return {
+    id: created.id,
+    warehouseId: created.warehouse_id,
+    warehouseName: created.warehouse_id,
+    route: null,
+    resources: {
+      food: created.resources?.food ?? 0,
+      water: created.resources?.water ?? 0,
+      medicine: created.resources?.medicine ?? 0,
+      firstAid: created.resources?.first_aid ?? 0,
+    },
+    status: created.status ?? "pending",
+    eta: created.eta ?? "-",
+    timestamp: created.timestamp ?? new Date().toISOString(),
+    destination: created.destination ?? payload.destination,
+    currentPosition: undefined,
+  };
 }
 
 // ─── Local helpers (no backend needed) ───────────────────────────────────────

@@ -1,4 +1,4 @@
-@import "leaflet/dist/leaflet.css";
+﻿@import "leaflet/dist/leaflet.css";
 
 @tailwind base;
 @tailwind components;
@@ -15,7 +15,8 @@
     --popover: 0 0% 100%;
     --popover-foreground: 220 15% 18%;
 
-    --primary: 200 65% 38%;
+    /* Premium SaaS look: neutral primary (black) */
+    --primary: 0 0% 0%;
     --primary-foreground: 0 0% 100%;
 
     --secondary: 210 18% 94%;
@@ -32,7 +33,7 @@
 
     --border: 214 20% 88%;
     --input: 214 20% 88%;
-    --ring: 200 65% 38%;
+    --ring: 0 0% 0%;
 
     --radius: 0.625rem;
 
@@ -53,75 +54,82 @@ html, body, #root {
   * { @apply border-border; }
   html, body { overflow-x: hidden; max-width: 100vw; }
   body {
-    @apply bg-background text-foreground antialiased;
+    @apply bg-[#f5f7f6] text-foreground antialiased;
     font-feature-settings: "cv11", "ss01";
   }
 }
 
 @layer components {
 
+  /* ── Tab shell (main container) ── */
+  .tab-shell {
+    @apply w-full px-6 py-6 bg-white/60 backdrop-blur-md rounded-[20px] ring-1 ring-black/5;
+  }
+
   /* ── Status badges ── */
   .status-badge {
-    @apply inline-flex items-center gap-1.5 rounded-md px-2.5 py-1 text-xs font-semibold tracking-wide uppercase;
+    @apply inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-semibold;
   }
   .status-badge-active {
-    @apply status-badge bg-emerald-100 text-emerald-800;
+    @apply status-badge bg-green-50 text-green-600;
   }
   .status-badge-warning {
-    @apply status-badge bg-amber-100 text-amber-800;
+    @apply status-badge bg-yellow-50 text-yellow-600;
   }
   .status-badge-danger {
-    @apply status-badge bg-red-100 text-red-800;
+    @apply status-badge bg-red-50 text-red-600;
   }
   .status-badge-neutral {
-    @apply status-badge bg-slate-100 text-slate-700;
+    @apply status-badge bg-gray-100 text-gray-600;
   }
   .status-badge-blue {
-    @apply status-badge bg-blue-100 text-blue-800;
+    @apply status-badge bg-blue-50 text-blue-600;
   }
 
   /* ── Cards ── */
   .stat-card {
-    @apply rounded-xl border bg-card p-5 shadow-sm;
+    @apply bg-white rounded-2xl p-5 ring-1 ring-black/5
+           shadow-[0_4px_20px_rgba(0,0,0,0.05)]
+           hover:shadow-[0_6px_30px_rgba(0,0,0,0.08)]
+           transition-all duration-300 hover:-translate-y-1;
   }
 
-  /* ── Section titles ── */
+  /* ── Typography ── */
   .section-title {
-    @apply text-xs font-bold uppercase tracking-widest text-muted-foreground;
+    @apply text-lg font-semibold text-gray-700;
   }
 
-  /* ── Page title ── */
   .page-title {
-    @apply text-lg font-bold text-foreground;
+    @apply text-2xl font-semibold text-gray-800;
   }
 
   /* ── Input base ── */
   .input-base {
-    @apply w-full rounded-lg border bg-background px-3 py-2.5 text-sm text-foreground
-           shadow-sm outline-none transition-all placeholder:text-muted-foreground
-           focus:border-primary focus:ring-2 focus:ring-primary/20;
+    @apply w-full rounded-xl border border-black/10 bg-white/80 px-3 py-2.5 text-sm text-gray-800
+           shadow-sm outline-none transition-all placeholder:text-gray-400
+           focus:border-black/20 focus:ring-2 focus:ring-black/10;
   }
 
   /* ── Buttons ── */
   .btn-primary {
-    @apply flex items-center justify-center gap-2 rounded-lg bg-primary px-4 py-2.5
-           text-sm font-semibold text-primary-foreground shadow-sm transition-all
-           hover:opacity-90 active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed;
+    @apply inline-flex items-center justify-center gap-2 rounded-full bg-black px-5 py-2
+           text-sm font-semibold text-white shadow-sm transition
+           hover:bg-gray-800 active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed;
   }
   .btn-danger {
-    @apply flex items-center justify-center gap-2 rounded-lg bg-destructive px-4 py-2.5
-           text-sm font-semibold text-destructive-foreground shadow-sm transition-all
+    @apply inline-flex items-center justify-center gap-2 rounded-full bg-destructive px-5 py-2
+           text-sm font-semibold text-destructive-foreground shadow-sm transition
            hover:opacity-90 active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed;
   }
   .btn-accent {
-    @apply flex items-center justify-center gap-2 rounded-lg bg-accent px-4 py-2.5
-           text-sm font-semibold text-accent-foreground shadow-sm transition-all
-           hover:opacity-90 active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed;
+    @apply inline-flex items-center justify-center gap-2 rounded-full bg-black px-5 py-2
+           text-sm font-semibold text-white shadow-sm transition
+           hover:bg-gray-800 active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed;
   }
   .btn-outline {
-    @apply flex items-center justify-center gap-2 rounded-lg border bg-card px-4 py-2.5
-           text-sm font-semibold text-foreground shadow-sm transition-all
-           hover:bg-muted active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed;
+    @apply inline-flex items-center justify-center gap-2 rounded-full bg-gray-100 px-4 py-2
+           text-sm font-semibold text-gray-700 shadow-sm transition
+           hover:bg-gray-200 active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed;
   }
 }
 
@@ -137,4 +145,19 @@ html, body, #root {
   }
   .leaflet-tile-container img,
   .leaflet-tile { width: 256px !important; height: 256px !important; }
+
+  /* Route styling (Leaflet polylines) */
+  @keyframes route-dash {
+    to { stroke-dashoffset: -120; }
+  }
+  .leaflet-interactive.route-blocked {
+    animation: route-dash 8s linear infinite;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+  .leaflet-interactive.route-safe {
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
 }
+

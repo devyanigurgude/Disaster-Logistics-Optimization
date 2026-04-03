@@ -1,4 +1,4 @@
-import { useAppContext } from "@/contexts/AppContext";
+﻿import { useAppContext } from "@/contexts/AppContext";
 import { Activity, AlertTriangle, MapPin, Package, Warehouse, RefreshCw } from "lucide-react";
 
 export default function DashboardTab() {
@@ -21,13 +21,14 @@ export default function DashboardTab() {
       : { label: "All Systems Operational", cls: "status-badge-active" };
 
   return (
-    <div className="p-6 space-y-6 h-[calc(100vh-112px)] overflow-y-auto">
+    <div className="h-[calc(100vh-112px)] overflow-y-auto">
+      <div className="tab-shell space-y-6">
 
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
           <h2 className="page-title">System Overview</h2>
-          <p className="text-sm text-muted-foreground mt-0.5">
+          <p className="mt-1 text-sm text-gray-500">
             Real-time disaster logistics monitoring
           </p>
         </div>
@@ -41,7 +42,7 @@ export default function DashboardTab() {
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <StatCard
           icon={<AlertTriangle className="h-5 w-5 text-red-600" />}
-          iconBg="bg-red-100"
+          iconBg="bg-red-50"
           label="Active Disasters"
           value={activeDisasters}
           sub={monitoringCount > 0 ? `${monitoringCount} monitoring` : "None monitoring"}
@@ -49,21 +50,21 @@ export default function DashboardTab() {
         />
         <StatCard
           icon={<MapPin className="h-5 w-5 text-blue-600" />}
-          iconBg="bg-blue-100"
+          iconBg="bg-blue-50"
           label="Active Routes"
           value={activeRoutes}
           sub={state.route?.blocked ? "Route blocked" : state.route ? "Route safe" : "No route calculated"}
         />
         <StatCard
           icon={<Package className="h-5 w-5 text-amber-600" />}
-          iconBg="bg-amber-100"
+          iconBg="bg-yellow-50"
           label="Ongoing Dispatches"
           value={ongoingDispatches}
           sub={deliveredCount > 0 ? `${deliveredCount} delivered` : "None delivered yet"}
         />
         <StatCard
           icon={<Warehouse className="h-5 w-5 text-emerald-600" />}
-          iconBg="bg-emerald-100"
+          iconBg="bg-green-50"
           label="Total Warehouses"
           value={state.warehouses.length}
           sub={`${totalStock.toLocaleString()} units total`}
@@ -81,7 +82,10 @@ export default function DashboardTab() {
           ) : (
             <div className="space-y-3">
               {state.disasters.filter((d) => d.status === "active").map((d) => (
-                <div key={d.id} className="flex items-start justify-between gap-3 rounded-lg border border-red-100 bg-red-50 px-4 py-3">
+                <div
+                  key={d.id}
+                  className="flex items-start justify-between gap-3 rounded-xl border border-slate-100 bg-white px-4 py-3 shadow-sm transition-all duration-200 hover:-translate-y-1 hover:shadow-md border-l-4 border-l-red-500"
+                >
                   <div className="flex items-start gap-3">
                     <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-red-600" />
                     <div>
@@ -114,7 +118,7 @@ export default function DashboardTab() {
                       <p className="text-sm font-semibold text-foreground">{w.name}</p>
                       <span className="text-xs text-muted-foreground">{total.toLocaleString()} units</span>
                     </div>
-                    <div className="h-2 rounded-full bg-muted overflow-hidden">
+                    <div className="h-2 rounded-full bg-gray-100 overflow-hidden">
                       <div className={`h-full rounded-full transition-all ${bar}`} style={{ width: `${pct}%` }} />
                     </div>
                     <p className="text-[11px] text-muted-foreground mt-1">{w.location.name} · {pct}% stocked</p>
@@ -133,7 +137,7 @@ export default function DashboardTab() {
           {state.logs.length > 0 && (
             <button
               onClick={() => dispatch({ type: "CLEAR_LOGS" })}
-              className="flex items-center gap-1.5 rounded-lg px-2.5 py-1 text-xs font-medium text-muted-foreground hover:bg-muted hover:text-foreground transition-colors"
+              className="flex items-center gap-1.5 rounded-full bg-gray-100 px-3 py-1.5 text-xs font-semibold text-gray-700 hover:bg-gray-200 transition-colors"
             >
               <RefreshCw className="h-3 w-3" />
               Clear
@@ -161,6 +165,7 @@ export default function DashboardTab() {
           </div>
         )}
       </div>
+      </div>
     </div>
   );
 }
@@ -176,8 +181,8 @@ function StatCard({ icon, iconBg, label, value, sub, valueColor = "text-foregrou
       </div>
       <div className="min-w-0">
         <p className={`text-2xl font-bold ${valueColor}`}>{value}</p>
-        <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mt-0.5">{label}</p>
-        {sub && <p className="text-[11px] text-muted-foreground mt-0.5">{sub}</p>}
+        <p className="mt-1 text-sm font-semibold text-gray-700">{label}</p>
+        {sub && <p className="mt-0.5 text-xs text-gray-500">{sub}</p>}
       </div>
     </div>
   );
@@ -198,3 +203,4 @@ function LogDot({ status }: { status: string }) {
   };
   return <span className={`mt-1.5 h-2 w-2 shrink-0 rounded-full ${colors[status] ?? "bg-muted-foreground"}`} />;
 }
+

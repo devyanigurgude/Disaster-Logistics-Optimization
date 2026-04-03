@@ -1,4 +1,4 @@
-import { useState } from "react";
+﻿﻿import { useEffect, useRef, useState } from "react";
 import { Loader2, Route, AlertTriangle, CheckCircle, ArrowRight, Info } from "lucide-react";
 import CitySearch from "@/components/CitySearch";
 import LeafletMap from "@/components/LeafletMap";
@@ -6,7 +6,7 @@ import { RouteData, RouteSegment, Disaster, useAppContext } from "@/contexts/App
 import { fetchRoute } from "@/lib/api";
 import { toast } from "sonner";
 
-// ─── Helpers (module level — outside the component) ───────────────────────────
+// â”€â”€â”€ Helpers (module level — outside the component) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 function haversineCheck(lat1: number, lon1: number, lat2: number, lon2: number): number {
   const R = 6371;
@@ -31,7 +31,7 @@ function distancePointToSegment(
   const D = p2Lon - cLon;
   const dot = A * C + B * D;
   const lenSq = C * C + D * D;
-  let param = lenSq !== 0 ? dot / lenSq : -1;
+  const param = lenSq !== 0 ? dot / lenSq : -1;
   let xx: number, yy: number;
   if (param < 0)      { xx = p1Lon; yy = p1Lat; }
   else if (param > 1) { xx = p2Lon; yy = p2Lat; }
@@ -66,69 +66,63 @@ interface RouteInfoProps {
 function RouteInfoCard({
   label, distance, eta, blocked, isAlternate, deltaKm, deltaPercent,
 }: RouteInfoProps) {
+  const tag = blocked
+    ? { label: "Blocked", cls: "bg-red-50 text-red-600" }
+    : isAlternate
+    ? { label: "Recommended", cls: "bg-green-50 text-green-600" }
+    : { label: "Safe", cls: "bg-green-50 text-green-600" };
+
+  const shell = blocked
+    ? "border-l-red-400 bg-red-50/40"
+    : isAlternate
+    ? "border-l-green-400 bg-green-50/30"
+    : "border-l-green-400 bg-white";
+
   return (
-    <div className={`rounded-xl border-2 p-4 ${
-      blocked
-        ? "border-red-300 bg-red-50"
-        : isAlternate
-        ? "border-emerald-400 bg-emerald-50"
-        : "border-emerald-200 bg-emerald-50"
-    }`}>
-      <div className="flex items-center justify-between gap-2 mb-3">
+    <div
+      className={`stat-card border-l-4 ${shell}`}
+    >
+      <div className="mb-3 flex items-start justify-between gap-3">
         <div className="flex items-center gap-2">
           {blocked
             ? <AlertTriangle className="h-4 w-4 text-red-600 shrink-0" />
             : <CheckCircle className="h-4 w-4 text-emerald-600 shrink-0" />}
-          <span className="text-sm font-bold text-foreground">{label}</span>
+          <span className="text-sm font-semibold text-gray-800">{label}</span>
         </div>
-        {blocked ? (
-          <span className="text-[10px] font-bold uppercase tracking-wide text-red-700 bg-red-100 px-2 py-1 rounded-md border border-red-200">
-            BLOCKED
-          </span>
-        ) : isAlternate ? (
-          <span className="text-[10px] font-bold uppercase tracking-wide text-emerald-700 bg-emerald-100 px-2 py-1 rounded-md border border-emerald-200">
-            SAFE DETOUR
-          </span>
-        ) : null}
+        <span className={`shrink-0 rounded-full px-3 py-1 text-xs font-semibold ${tag.cls}`}>
+          {tag.label}
+        </span>
       </div>
 
       <div className="grid grid-cols-3 gap-2">
-        <div className="text-center bg-white/60 rounded-lg py-2 px-1">
-          <p className={`text-lg font-bold ${blocked ? "text-red-600" : "text-emerald-700"}`}>
-            {distance.toLocaleString()} km
-          </p>
-          <p className="text-[10px] font-bold uppercase tracking-wide text-muted-foreground mt-0.5">Distance</p>
+        <div className="rounded-2xl bg-white/70 px-3 py-3 text-center ring-1 ring-black/5">
+          <p className={`text-lg font-semibold ${blocked ? "text-red-600" : "text-emerald-700"}`}>{distance.toLocaleString()} km</p>
+          <p className="mt-1 text-xs text-gray-400">Distance</p>
         </div>
-        <div className="text-center bg-white/60 rounded-lg py-2 px-1">
-          <p className={`text-lg font-bold ${blocked ? "text-red-600" : "text-emerald-700"}`}>
-            {eta}
-          </p>
-          <p className="text-[10px] font-bold uppercase tracking-wide text-muted-foreground mt-0.5">ETA</p>
+        <div className="rounded-2xl bg-white/70 px-3 py-3 text-center ring-1 ring-black/5">
+          <p className={`text-lg font-semibold ${blocked ? "text-red-600" : "text-emerald-700"}`}>{eta}</p>
+          <p className="mt-1 text-xs text-gray-400">ETA</p>
         </div>
-        <div className="text-center bg-white/60 rounded-lg py-2 px-1">
-          <p className={`text-lg font-bold ${blocked ? "text-red-600" : "text-emerald-700"}`}>
-            {blocked ? "Blocked" : "Safe"}
-          </p>
-          <p className="text-[10px] font-bold uppercase tracking-wide text-muted-foreground mt-0.5">Status</p>
+        <div className="rounded-2xl bg-white/70 px-3 py-3 text-center ring-1 ring-black/5">
+          <p className={`text-lg font-semibold ${blocked ? "text-red-600" : "text-emerald-700"}`}>{blocked ? "Blocked" : "Safe"}</p>
+          <p className="mt-1 text-xs text-gray-400">Status</p>
         </div>
       </div>
 
       {deltaKm !== undefined && deltaPercent && (
-        <div className="mt-2 p-2 bg-gradient-to-r from-emerald-100 to-blue-100 rounded-lg border">
-          <p className="text-sm font-semibold text-emerald-800">
-            +{deltaKm.toLocaleString()} km ({deltaPercent} longer)
-          </p>
-        </div>
+        <p className="mt-2 text-sm text-gray-500">
+          +{deltaKm.toLocaleString()} km (+{deltaPercent})
+        </p>
       )}
 
       {blocked && (
-        <div className="mt-3 flex items-center gap-2 rounded-lg bg-red-100 border border-red-200 px-3 py-2 text-xs text-red-700 font-medium">
+        <div className="mt-3 flex items-start gap-2 rounded-2xl border border-red-200 bg-red-50 px-3 py-2 text-xs font-medium text-red-700">
           <AlertTriangle className="h-3.5 w-3.5 shrink-0" />
           Passes through active disaster zone — safe detour shown on map
         </div>
       )}
       {isAlternate && (
-        <div className="mt-3 flex items-center gap-2 rounded-lg bg-emerald-100 border border-emerald-200 px-3 py-2 text-xs text-emerald-700 font-medium">
+        <div className="mt-3 flex items-start gap-2 rounded-2xl border border-emerald-200 bg-emerald-50 px-3 py-2 text-xs font-medium text-emerald-700">
           <CheckCircle className="h-3.5 w-3.5 shrink-0" />
           Safe detour calculated by C++ optimizer (sum of path edges)
         </div>
@@ -137,11 +131,25 @@ function RouteInfoCard({
   );
 }
 
-// ─── Main Component ───────────────────────────────────────────────────────────
+// â”€â”€â”€ Main Component â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 export default function RouteOperationsTab() {
-  const { state, dispatch, addLog } = useAppContext();
+  const { state, dispatch, addLog, setRouteData, setAlternateRouteData } = useAppContext();
   const [finding, setFinding] = useState(false);
+  const restoredLogged = useRef(false);
+
+  useEffect(() => {
+    if (restoredLogged.current) return;
+    if (!state.route && !state.alternateRoute) return;
+
+    restoredLogged.current = true;
+    console.log("[route] restored from AppContext", {
+      source: state.source?.name,
+      destination: state.destination?.name,
+      hasRoute: !!state.route,
+      hasAlternate: !!state.alternateRoute,
+    });
+  }, [state.alternateRoute, state.destination, state.route, state.source]);
 
   const handleFindRoute = async () => {
     if (!state.source || !state.destination) {
@@ -159,8 +167,8 @@ export default function RouteOperationsTab() {
     setFinding(true);
     dispatch({ type: "SET_LOADING", payload: { route: true } });
     dispatch({ type: "SET_ERROR",   payload: { route: null } });
-    dispatch({ type: "SET_ROUTE",   payload: null });
-    dispatch({ type: "SET_ALTERNATE_ROUTE", payload: null });
+    setRouteData(null);
+    setAlternateRouteData(null);
 
     try {
       const result = await fetchRoute(state.source, state.destination);
@@ -169,18 +177,21 @@ export default function RouteOperationsTab() {
       if (result.blocked) {
         // Backend already computed the safe detour in result.path
         // result.directPath is the original blocked route (for red line on map)
-        dispatch({ type: "SET_ROUTE", payload: result });
+        setRouteData(result);
+        console.log("[route] saved to AppContext (blocked)", { distance: result.distance, eta: result.eta });
         addLog("route", "Route blocked by disaster zone. Safe detour calculated by optimizer.", "warning");
         toast.warning("Route blocked — safe detour shown on map.");
       } else {
         // Double-check with frontend too
         const frontendSafe = isRouteActuallySafe(result.path, activeDisasters);
-        dispatch({ type: "SET_ROUTE", payload: { ...result, safe: frontendSafe } });
+        const safeResult: RouteData = { ...result, safe: frontendSafe };
+        setRouteData(safeResult);
+        console.log("[route] saved to AppContext (safe)", { distance: safeResult.distance, eta: safeResult.eta });
         addLog("route", `Safe route: ${result.distance} km, ETA: ${result.eta}`, "success");
         toast.success(`Safe route found: ${result.distance} km, ETA: ${result.eta}`);
       }
-    } catch (err: any) {
-      const msg = err.message ?? "Unknown error";
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : "Unknown error";
       addLog("route", `Route calculation failed: ${msg}`, "error");
       dispatch({ type: "SET_ERROR", payload: { route: msg } });
       toast.error("Failed to calculate route. Is the backend running?");
@@ -193,29 +204,39 @@ export default function RouteOperationsTab() {
   const handleClearRoute = () => {
     dispatch({ type: "SET_SOURCE",         payload: null });
     dispatch({ type: "SET_DESTINATION",    payload: null });
-    dispatch({ type: "SET_ROUTE",          payload: null });
-    dispatch({ type: "SET_ALTERNATE_ROUTE", payload: null });
+    setRouteData(null);
+    setAlternateRouteData(null);
     addLog("route", "Route cleared.", "info");
   };
 
   return (
-    <div className="flex h-[calc(100vh-112px)] overflow-hidden">
-      <div className="w-[65%] min-w-0 p-3">
-        <LeafletMap className="h-full w-full" />
-      </div>
+    <div className="h-[calc(100vh-112px)]">
+      <div className="tab-shell h-full overflow-y-auto lg:overflow-hidden">
+        <div className="grid h-full grid-cols-1 grid-rows-[45vh_auto] gap-4 lg:grid-cols-4 lg:grid-rows-[1fr]">
+          <div className="min-w-0 min-h-0 lg:col-span-3">
+            <div className="stat-card h-full p-3">
+              <LeafletMap className="h-full w-full" />
+            </div>
+          </div>
 
-      <div className="w-[35%] shrink-0 overflow-y-auto border-l bg-white p-6 space-y-6">
+          <div className="min-w-0 min-h-0 lg:col-span-1 space-y-6 overflow-visible lg:overflow-y-auto pr-1">
+            <div className="stat-card">
+              <h2 className="page-title">Route Operations</h2>
+              <p className="mt-1 text-sm text-gray-500">
+                Plan primary routes, detect blockages, and compare safe detours.
+              </p>
+            </div>
 
-        <section className="space-y-4">
-          <h3 className="section-title">Route Planning</h3>
-          <div className="space-y-3">
+            <section className="stat-card space-y-4">
+              <h3 className="section-title">Route Planning</h3>
+              <div className="space-y-3">
             <CitySearch
               label="Source City"
               value={state.source}
               onSelect={(c) => {
                 dispatch({ type: "SET_SOURCE",      payload: c });
-                dispatch({ type: "SET_ROUTE",       payload: null });
-                dispatch({ type: "SET_ALTERNATE_ROUTE", payload: null });
+                setRouteData(null);
+                setAlternateRouteData(null);
               }}
               placeholder="Search source city..."
             />
@@ -224,14 +245,14 @@ export default function RouteOperationsTab() {
               value={state.destination}
               onSelect={(c) => {
                 dispatch({ type: "SET_DESTINATION", payload: c });
-                dispatch({ type: "SET_ROUTE",       payload: null });
-                dispatch({ type: "SET_ALTERNATE_ROUTE", payload: null });
+                setRouteData(null);
+                setAlternateRouteData(null);
               }}
               placeholder="Search destination city..."
             />
 
             {state.source && state.destination && (
-              <div className="flex items-center gap-2 rounded-lg bg-muted px-3 py-2.5 text-sm">
+              <div className="flex items-center gap-2 rounded-2xl bg-white/70 px-4 py-3 text-sm ring-1 ring-black/5">
                 <span className="font-semibold text-foreground truncate">{state.source.name}</span>
                 <ArrowRight className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
                 <span className="font-semibold text-foreground truncate">{state.destination.name}</span>
@@ -248,14 +269,14 @@ export default function RouteOperationsTab() {
                 {finding ? "Calculating..." : "Find Route"}
               </button>
               {(state.source || state.destination || state.route) && (
-                <button onClick={handleClearRoute} disabled={finding} className="btn-outline px-3">
+                <button onClick={handleClearRoute} disabled={finding} className="btn-outline px-4">
                   Clear
                 </button>
               )}
             </div>
 
             {state.errors.route && (
-              <div className="flex items-start gap-2 rounded-lg border border-red-200 bg-red-50 px-3 py-2.5 text-xs text-red-700">
+              <div className="flex items-start gap-2 rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
                 <AlertTriangle className="mt-0.5 h-3.5 w-3.5 shrink-0" />
                 {state.errors.route}
               </div>
@@ -264,7 +285,7 @@ export default function RouteOperationsTab() {
         </section>
 
         {state.route && (
-          <section className="space-y-3">
+          <section className="stat-card space-y-3">
             <h3 className="section-title">Route Result</h3>
 
             {state.route && (
@@ -315,14 +336,18 @@ export default function RouteOperationsTab() {
             )}
 
             {state.route?.blocked && (
-              <div className="flex items-start gap-2 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2.5 text-xs text-amber-800">
+              <div className="flex items-start gap-2 rounded-2xl border border-yellow-200 bg-yellow-50 px-4 py-3 text-sm text-yellow-800">
                 <Info className="mt-0.5 h-3.5 w-3.5 shrink-0" />
                 Red dashed = original (blocked), Green solid = safe detour. Distances now show path sums!
               </div>
             )}
           </section>
         )}
+          </div>
+        </div>
       </div>
     </div>
   );
 }
+
+

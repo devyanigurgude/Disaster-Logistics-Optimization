@@ -1,4 +1,4 @@
-import { useState } from "react";
+﻿import { useState } from "react";
 import AppHeader, { TabName } from "@/components/AppHeader";
 import DashboardTab from "@/pages/DashboardTab";
 import RouteOperationsTab from "@/pages/RouteOperationsTab";
@@ -16,13 +16,13 @@ function AppShell() {
   useLocalStorageSync();
 
   return (
-    <div className="flex min-h-screen flex-col bg-background">
+    <div className="flex min-h-screen flex-col bg-[#f5f7f6]">
       <AppHeader activeTab={activeTab} onTabChange={setActiveTab} />
 
       {error && (
-        <div className="bg-amber-50 border-b border-amber-200 px-6 py-2 text-xs text-amber-700 flex items-center gap-2">
-          <span className="font-semibold">? Backend offline:</span>
-          {error} � running on local data.
+        <div className="border-b border-black/5 bg-yellow-50/80 px-6 py-2 text-xs text-yellow-700 flex items-center gap-2">
+          <span className="font-semibold">Backend offline:</span>
+          {error} — running on local data.
         </div>
       )}
 
@@ -53,3 +53,5 @@ export default function Index() {
     </AppProvider>
   );
 }
+
+

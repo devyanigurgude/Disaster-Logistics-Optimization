@@ -28,22 +28,22 @@ export default function AppHeader({ activeTab, onTabChange }: AppHeaderProps) {
     activeAlerts > 0
       ? { label: `${activeAlerts} Active Alert${activeAlerts > 1 ? "s" : ""}`, cls: "status-badge-danger" }
       : inTransit > 0
-      ? { label: `${inTransit} In Transit`, cls: "status-badge-warning" }
+      ? { label: `${inTransit} In Transit`, cls: "status-badge-blue" }
       : { label: "Monitoring Active", cls: "status-badge-active" };
 
   return (
-    <header className="sticky top-0 z-50 border-b bg-card shadow-sm">
+    <header className="sticky top-0 z-50 border-b border-black/5 bg-white/70 backdrop-blur-md">
       {/* Top bar */}
       <div className="flex items-center justify-between px-6 py-3.5">
         <div className="flex items-center gap-3">
-          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary/10">
-            <Shield className="h-5 w-5 text-primary" />
+          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-black/5">
+            <Shield className="h-5 w-5 text-gray-800" />
           </div>
           <div>
-            <h1 className="text-base font-bold tracking-tight text-foreground leading-none">
+            <h1 className="text-base font-bold tracking-tight text-gray-800 leading-none">
               Smart Disaster Logistics
             </h1>
-            <p className="text-[11px] text-muted-foreground leading-none mt-1">
+            <p className="text-[11px] text-gray-500 leading-none mt-1">
               Route Safety Optimization System
             </p>
           </div>
@@ -56,7 +56,7 @@ export default function AppHeader({ activeTab, onTabChange }: AppHeaderProps) {
           </span>
 
           <div className="relative">
-            <button className="rounded-lg p-2 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground">
+            <button className="rounded-xl p-2 text-gray-500 transition-colors hover:bg-black/5 hover:text-gray-800">
               <Bell className="h-5 w-5" />
             </button>
             {alertCount > 0 && (
@@ -66,15 +66,15 @@ export default function AppHeader({ activeTab, onTabChange }: AppHeaderProps) {
             )}
           </div>
 
-          <div className="flex items-center gap-2 rounded-lg bg-muted px-3 py-2">
-            <User className="h-4 w-4 text-muted-foreground" />
-            <span className="text-sm font-semibold text-foreground">Admin</span>
+          <div className="flex items-center gap-2 rounded-full bg-black/5 px-3 py-2">
+            <User className="h-4 w-4 text-gray-500" />
+            <span className="text-sm font-semibold text-gray-800">Admin</span>
           </div>
         </div>
       </div>
 
       {/* Tab bar */}
-      <nav className="flex gap-0 px-6 overflow-x-auto" aria-label="Main navigation">
+      <nav className="flex gap-2 px-6 overflow-x-auto" aria-label="Main navigation">
         {tabs.map((tab) => {
           const badge =
             tab === "Disaster Management" ? activeAlerts
@@ -85,10 +85,10 @@ export default function AppHeader({ activeTab, onTabChange }: AppHeaderProps) {
             <button
               key={tab}
               onClick={() => onTabChange(tab)}
-              className={`relative whitespace-nowrap px-4 py-3 text-sm font-semibold transition-colors ${
+              className={`relative my-2 whitespace-nowrap rounded-full px-4 py-2.5 text-sm font-semibold transition-colors ${
                 activeTab === tab
-                  ? "text-primary"
-                  : "text-muted-foreground hover:text-foreground"
+                  ? "bg-black text-white shadow-sm"
+                  : "text-gray-600 hover:bg-black/5 hover:text-gray-800"
               }`}
             >
               <span className="flex items-center gap-1.5">
@@ -99,9 +99,6 @@ export default function AppHeader({ activeTab, onTabChange }: AppHeaderProps) {
                   </span>
                 )}
               </span>
-              {activeTab === tab && (
-                <span className="absolute inset-x-0 bottom-0 h-0.5 rounded-full bg-primary" />
-              )}
             </button>
           );
         })}

@@ -265,6 +265,8 @@ interface AppContextType {
   state: AppState;
   dispatch: React.Dispatch<Action>;
   addLog: (type: LogEntry["type"], message: string, status: LogEntry["status"]) => void;
+  setRouteData: (route: RouteData | null) => void;
+  setAlternateRouteData: (route: RouteData | null) => void;
 }
 
 const AppContext = createContext<AppContextType | null>(null);
@@ -288,8 +290,18 @@ export function AppProvider({ children }: { children: ReactNode }) {
     []
   );
 
+  const setRouteData = useCallback((route: RouteData | null) => {
+    dispatch({ type: "SET_ROUTE", payload: route });
+  }, []);
+
+  const setAlternateRouteData = useCallback((route: RouteData | null) => {
+    dispatch({ type: "SET_ALTERNATE_ROUTE", payload: route });
+  }, []);
+
   return (
-    <AppContext.Provider value={{ state, dispatch, addLog }}>
+    <AppContext.Provider
+      value={{ state, dispatch, addLog, setRouteData, setAlternateRouteData }}
+    >
       {children}
     </AppContext.Provider>
   );

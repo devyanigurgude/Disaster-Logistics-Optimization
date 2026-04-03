@@ -1,4 +1,4 @@
-import { useState } from "react";
+﻿﻿import { useState } from "react";
 import { Plus, Pencil, Trash2, AlertTriangle, MapPin, Filter, ChevronDown, ChevronUp } from "lucide-react";
 import CitySearch from "@/components/CitySearch";
 import LeafletMap from "@/components/LeafletMap";
@@ -125,64 +125,68 @@ export default function DisasterManagementTab() {
   };
 
   return (
-    <div className="flex h-[calc(100vh-112px)] overflow-hidden">
-      {/* Left: Map */}
-      <div className="w-[65%] min-w-0 p-3">
-        <LeafletMap className="h-full w-full" />
-      </div>
-
-      {/* Right: Panel */}
-      <div className="w-[35%] shrink-0 overflow-y-auto border-l bg-card p-5 space-y-4">
-
-        {/* Header */}
-        <div className="flex items-center justify-between">
-          <div>
-            <h2 className="text-base font-bold text-foreground">Disaster Management</h2>
-            <p className="text-xs text-muted-foreground mt-0.5">
-              {stats.active} active · {stats.monitoring} monitoring · {stats.resolved} resolved
-            </p>
+    <div className="h-[calc(100vh-112px)]">
+      <div className="tab-shell h-full overflow-y-auto lg:overflow-hidden">
+        <div className="grid h-full grid-cols-1 grid-rows-[45vh_auto] gap-4 lg:grid-cols-4 lg:grid-rows-[1fr]">
+          {/* Left: Map */}
+          <div className="min-w-0 min-h-0 lg:col-span-3">
+            <div className="stat-card h-full p-3">
+              <LeafletMap className="h-full w-full" />
+            </div>
           </div>
-          <button
-            onClick={() => { if (showForm && !editing) { resetForm(); } else { setEditing(null); setForm(defaultForm); setShowForm(true); } }}
-            className="flex items-center gap-2 rounded-md bg-primary px-3 py-2 text-sm font-medium text-primary-foreground shadow-sm transition-all hover:opacity-90 active:scale-[0.98]"
-          >
-            <Plus className="h-4 w-4" />
-            Report Disaster
-          </button>
-        </div>
+
+          {/* Right: Panel */}
+          <div className="min-w-0 min-h-0 lg:col-span-1 space-y-6 overflow-visible lg:overflow-y-auto pr-1">
+
+            {/* Header */}
+            <div className="stat-card flex items-start justify-between gap-4">
+              <div className="min-w-0">
+                <h2 className="page-title">Disaster Management</h2>
+                <p className="mt-1 text-sm text-gray-500">
+                  {stats.active} active · {stats.monitoring} monitoring · {stats.resolved} resolved
+                </p>
+              </div>
+              <button
+                onClick={() => { if (showForm && !editing) { resetForm(); } else { setEditing(null); setForm(defaultForm); setShowForm(true); } }}
+                className="btn-primary whitespace-nowrap"
+              >
+                <Plus className="h-4 w-4" />
+                Report
+              </button>
+            </div>
 
         {/* Stat pills — clickable to filter */}
-        <div className="grid grid-cols-3 gap-2">
+        <div className="grid grid-cols-3 gap-4">
           {[
-            { label: "Active",     count: stats.active,     key: "active",     cls: "border-red-200 bg-red-50 text-red-700",         ring: "ring-red-400" },
-            { label: "Monitoring", count: stats.monitoring, key: "monitoring", cls: "border-amber-200 bg-amber-50 text-amber-700",   ring: "ring-amber-400" },
-            { label: "Resolved",   count: stats.resolved,   key: "resolved",   cls: "border-emerald-200 bg-emerald-50 text-emerald-700", ring: "ring-emerald-400" },
+            { label: "Active",     count: stats.active,     key: "active",     valueCls: "text-red-700",     ring: "ring-red-400" },
+            { label: "Monitoring", count: stats.monitoring, key: "monitoring", valueCls: "text-yellow-700",  ring: "ring-yellow-400" },
+            { label: "Resolved",   count: stats.resolved,   key: "resolved",   valueCls: "text-green-700",   ring: "ring-green-400" },
           ].map((s) => (
             <button
               key={s.key}
               onClick={() => setFilterStatus(filterStatus === s.key ? "all" : s.key)}
-              className={`rounded-lg border px-3 py-2.5 text-center transition-all hover:opacity-80 ${s.cls} ${filterStatus === s.key ? `ring-2 ${s.ring}` : ""}`}
+              className={`stat-card p-4 text-center ${filterStatus === s.key ? `ring-2 ${s.ring}` : ""}`}
             >
-              <p className="text-xl font-bold">{s.count}</p>
-              <p className="text-xs font-medium mt-0.5">{s.label}</p>
+              <p className={`text-2xl font-bold ${s.valueCls}`}>{s.count}</p>
+              <p className="mt-1 text-xs text-gray-400">{s.label}</p>
             </button>
           ))}
         </div>
 
         {/* Disaster List — ABOVE the form */}
-        <div className="space-y-3">
+        <div className="stat-card space-y-3">
           {/* Severity filter */}
           <div className="flex items-center gap-2 flex-wrap">
-            <Filter className="h-3.5 w-3.5 text-muted-foreground" />
-            <span className="text-xs font-medium text-muted-foreground">Severity:</span>
+            <Filter className="h-3.5 w-3.5 text-gray-400" />
+            <span className="text-xs font-semibold text-gray-400">Severity:</span>
             {["all", ...severities].map((s) => (
               <button
                 key={s}
                 onClick={() => setFilterSeverity(s)}
                 className={`rounded-full px-2.5 py-0.5 text-xs font-medium capitalize transition-colors ${
                   filterSeverity === s
-                    ? "bg-primary text-primary-foreground"
-                    : "bg-muted text-muted-foreground hover:text-foreground"
+                    ? "bg-black text-white"
+                    : "bg-gray-100 text-gray-700 hover:bg-gray-200"
                 }`}
               >
                 {s}
@@ -192,12 +196,12 @@ export default function DisasterManagementTab() {
 
           {/* List */}
           {filtered.length === 0 ? (
-            <div className="flex flex-col items-center justify-center rounded-lg border border-dashed py-10 text-center">
+            <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-black/10 bg-white/60 py-10 text-center">
               <AlertTriangle className="h-8 w-8 text-muted-foreground/30 mb-2" />
               <p className="text-sm text-muted-foreground">No disasters match the current filter.</p>
               <button
                 onClick={() => { setFilterSeverity("all"); setFilterStatus("all"); }}
-                className="mt-2 text-xs text-primary hover:underline"
+                className="mt-3 text-xs text-gray-700 hover:underline"
               >
                 Clear filters
               </button>
@@ -218,10 +222,10 @@ export default function DisasterManagementTab() {
         </div>
 
         {/* Form — BELOW the list, collapsible */}
-        <div className="rounded-lg border bg-muted/20 overflow-hidden">
+        <div className="stat-card overflow-hidden p-0">
           <button
             onClick={() => setShowForm(!showForm)}
-            className="flex w-full items-center justify-between px-4 py-3 text-sm font-semibold text-foreground hover:bg-muted/40 transition-colors"
+            className="flex w-full items-center justify-between px-4 py-3 text-sm font-semibold text-foreground hover:bg-gray-50 transition-colors"
           >
             <span className="flex items-center gap-2">
               <Plus className="h-4 w-4 text-primary" />
@@ -239,7 +243,7 @@ export default function DisasterManagementTab() {
                   <select
                     value={form.type}
                     onChange={(e) => setForm((f) => ({ ...f, type: e.target.value }))}
-                    className="w-full rounded-md border bg-background px-3 py-2.5 text-sm text-foreground shadow-sm outline-none focus:border-primary focus:ring-2 focus:ring-primary/20"
+                    className="input-base"
                   >
                     <option value="">Select type...</option>
                     {disasterTypes.map((t) => <option key={t} value={t}>{t}</option>)}
@@ -252,7 +256,7 @@ export default function DisasterManagementTab() {
                   <select
                     value={form.severity}
                     onChange={(e) => setForm((f) => ({ ...f, severity: e.target.value as Disaster["severity"] }))}
-                    className="w-full rounded-md border bg-background px-3 py-2.5 text-sm text-foreground shadow-sm outline-none focus:border-primary focus:ring-2 focus:ring-primary/20"
+                    className="input-base"
                   >
                     {severities.map((s) => <option key={s} value={s} className="capitalize">{s.charAt(0).toUpperCase() + s.slice(1)}</option>)}
                   </select>
@@ -293,7 +297,7 @@ export default function DisasterManagementTab() {
                   <select
                     value={form.status}
                     onChange={(e) => setForm((f) => ({ ...f, status: e.target.value as Disaster["status"] }))}
-                    className="w-full rounded-md border bg-background px-3 py-2.5 text-sm text-foreground shadow-sm outline-none focus:border-primary focus:ring-2 focus:ring-primary/20"
+                    className="input-base"
                   >
                     {statuses.map((s) => <option key={s} value={s} className="capitalize">{s.charAt(0).toUpperCase() + s.slice(1)}</option>)}
                   </select>
@@ -307,7 +311,7 @@ export default function DisasterManagementTab() {
                     onChange={(e) => setForm((f) => ({ ...f, description: e.target.value }))}
                     rows={2}
                     placeholder="Describe the situation, impact and affected areas..."
-                    className="w-full rounded-md border bg-background px-3 py-2.5 text-sm text-foreground shadow-sm outline-none resize-none focus:border-primary focus:ring-2 focus:ring-primary/20"
+                    className="input-base resize-none"
                   />
                 </div>
               </div>
@@ -316,13 +320,13 @@ export default function DisasterManagementTab() {
                 <button
                   onClick={handleSubmit}
                   disabled={submitting}
-                  className="rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground shadow-sm transition-all hover:opacity-90 active:scale-[0.98] disabled:opacity-50"
+                  className="btn-primary"
                 >
                   {submitting ? "Saving..." : editing ? "Update Disaster" : "Report Disaster"}
                 </button>
                 <button
                   onClick={resetForm}
-                  className="rounded-md border px-4 py-2 text-sm font-medium text-foreground transition-colors hover:bg-muted"
+                  className="btn-outline"
                 >
                   Cancel
                 </button>
@@ -331,12 +335,14 @@ export default function DisasterManagementTab() {
           )}
         </div>
 
+          </div>
+        </div>
       </div>
     </div>
   );
 }
 
-// ─── Disaster Card ────────────────────────────────────────────────────────────
+// â”€â”€â”€ Disaster Card â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 function DisasterCard({ disaster: d, onEdit, onDelete, onStatusChange }: {
   disaster: Disaster;
@@ -354,26 +360,26 @@ function DisasterCard({ disaster: d, onEdit, onDelete, onStatusChange }: {
   };
 
   const statusBg: Record<string, string> = {
-    active:     "bg-red-50/50",
-    monitoring: "bg-amber-50/50",
-    resolved:   "bg-emerald-50/30",
+    active:     "bg-red-50/30",
+    monitoring: "bg-yellow-50/20",
+    resolved:   "bg-green-50/20",
   };
 
   return (
-    <div className={`rounded-lg border p-3.5 transition-all hover:shadow-sm ${leftBorder[d.severity]} ${statusBg[d.status]}`}>
+    <div className={`stat-card ${leftBorder[d.severity]} ${statusBg[d.status]}`}>
       <div className="flex items-start justify-between gap-2">
         <div className="min-w-0 flex-1">
-          <p className="text-sm font-semibold text-foreground truncate">
+          <p className="text-sm font-semibold text-gray-800 truncate">
             {d.type} — {d.location.name}
           </p>
-          <p className="text-xs text-muted-foreground mt-0.5 line-clamp-1">{d.description}</p>
+          <p className="mt-1 text-sm text-gray-600 line-clamp-1">{d.description}</p>
           <div className="flex items-center gap-2 mt-2 flex-wrap">
             <SeverityBadge severity={d.severity} />
             <StatusBadge status={d.status} />
-            <span className="text-[11px] text-muted-foreground flex items-center gap-1">
+            <span className="text-[11px] text-gray-500 flex items-center gap-1">
               <MapPin className="h-3 w-3" />{d.radius} km
             </span>
-            <span className="text-[11px] text-muted-foreground">
+            <span className="text-[11px] text-gray-500">
               {new Date(d.timestamp).toLocaleDateString()}
             </span>
           </div>
@@ -382,21 +388,21 @@ function DisasterCard({ disaster: d, onEdit, onDelete, onStatusChange }: {
         <div className="flex items-center gap-1 shrink-0">
           <button
             onClick={() => setShowActions(!showActions)}
-            className="rounded p-1.5 text-muted-foreground hover:bg-white/70 hover:text-foreground transition-colors text-sm leading-none"
+            className="rounded-full bg-gray-100 p-2 text-gray-600 hover:bg-gray-200 hover:text-gray-800 transition-colors text-sm leading-none"
             title="Quick status"
           >
             ···
           </button>
           <button
             onClick={onEdit}
-            className="rounded p-1.5 text-muted-foreground hover:bg-white/70 hover:text-foreground transition-colors"
+            className="rounded-full bg-gray-100 p-2 text-gray-600 hover:bg-gray-200 hover:text-gray-800 transition-colors"
             title="Edit"
           >
             <Pencil className="h-3.5 w-3.5" />
           </button>
           <button
             onClick={onDelete}
-            className="rounded p-1.5 text-muted-foreground hover:bg-white/70 hover:text-destructive transition-colors"
+            className="rounded-full bg-gray-100 p-2 text-gray-600 hover:bg-red-50 hover:text-destructive transition-colors"
             title="Delete"
           >
             <Trash2 className="h-3.5 w-3.5" />
@@ -412,7 +418,7 @@ function DisasterCard({ disaster: d, onEdit, onDelete, onStatusChange }: {
             <button
               key={s}
               onClick={() => { onStatusChange(s); setShowActions(false); }}
-              className="rounded-full border bg-white/80 px-2.5 py-0.5 text-xs font-medium capitalize text-foreground hover:bg-primary hover:text-primary-foreground transition-colors"
+              className="rounded-full bg-gray-100 px-3 py-1 text-xs font-semibold capitalize text-gray-700 hover:bg-black hover:text-white transition-colors"
             >
               → {s}
             </button>
@@ -441,3 +447,5 @@ function StatusBadge({ status }: { status: string }) {
   };
   return <span className={`${cls[status] ?? "status-badge-neutral"} capitalize`}>{status}</span>;
 }
+
+

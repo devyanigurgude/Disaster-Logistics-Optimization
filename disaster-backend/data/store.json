@@ -37,14 +37,46 @@
         "lat": 28.6138954,
         "lon": 77.2090057
       },
-      "capacity": 500,
+      "capacity": 499,
       "current_stock": {
-        "food": 0,
-        "water": 0,
-        "medicine": 150,
-        "first_aid": 303
+        "food": 100,
+        "water": 100,
+        "medicine": 20,
+        "first_aid": 213
       },
       "id": "9939dab7-bd6a-471e-b26b-b2bab73d214f"
+    },
+    {
+      "name": "Nashik",
+      "location": {
+        "name": "Nashik",
+        "lat": 20.0112475,
+        "lon": 73.7902364
+      },
+      "capacity": 5000,
+      "current_stock": {
+        "food": 800,
+        "water": 1600,
+        "medicine": 400,
+        "first_aid": 240
+      },
+      "id": "9f078cc9-8892-4da3-a7fb-d16f6d32fa74"
+    },
+    {
+      "name": "Hi",
+      "location": {
+        "name": "Nashik",
+        "lat": 20.0112475,
+        "lon": 73.7902364
+      },
+      "capacity": 4993,
+      "current_stock": {
+        "food": 900,
+        "water": 1800,
+        "medicine": 450,
+        "first_aid": 270
+      },
+      "id": "3b49b944-5f1a-4493-afa2-7ad2160c30e0"
     }
   ],
   "dispatches": [
@@ -445,6 +477,63 @@
       "id": "13b2c3f3-e019-400d-b318-ad91e48cc302",
       "status": "pending",
       "timestamp": "2026-04-02T13:50:32.279007",
+      "eta": null
+    },
+    {
+      "warehouse_id": "9f078cc9-8892-4da3-a7fb-d16f6d32fa74",
+      "destination": {
+        "name": "Ahilyanagar",
+        "lat": 19.092952,
+        "lon": 74.7493451
+      },
+      "resources": {
+        "food": 100,
+        "water": 200,
+        "medicine": 50,
+        "first_aid": 30
+      },
+      "route_summary": "Nashik -> Ahilyanagar (5h 58m)",
+      "id": "0bfd3392-f28a-41df-a45c-7614aee5df5e",
+      "status": "delivered",
+      "timestamp": "2026-04-03T14:31:05.627424",
+      "eta": null
+    },
+    {
+      "warehouse_id": "9f078cc9-8892-4da3-a7fb-d16f6d32fa74",
+      "destination": {
+        "name": "Ahilyanagar",
+        "lat": 19.092952,
+        "lon": 74.7493451
+      },
+      "resources": {
+        "food": 100,
+        "water": 200,
+        "medicine": 50,
+        "first_aid": 30
+      },
+      "route_summary": "Nashik -> Ahilyanagar (5h 58m)",
+      "id": "06a47d8a-0e7c-4889-93ff-e8c7918719e3",
+      "status": "delivered",
+      "timestamp": "2026-04-03T14:41:09.857172",
+      "eta": null
+    },
+    {
+      "warehouse_id": "3b49b944-5f1a-4493-afa2-7ad2160c30e0",
+      "destination": {
+        "name": "Ahilyanagar",
+        "lat": 19.092952,
+        "lon": 74.7493451
+      },
+      "resources": {
+        "food": 100,
+        "water": 200,
+        "medicine": 50,
+        "first_aid": 30
+      },
+      "route_summary": "Hi -> Ahilyanagar (6h 1m)",
+      "id": "28d027cc-36cc-472e-8629-02a2c18ffeb5",
+      "status": "delivered",
+      "timestamp": "2026-04-03T16:43:52.172289",
       "eta": null
     }
   ]
