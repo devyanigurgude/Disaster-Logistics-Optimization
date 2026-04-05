@@ -1,4 +1,4 @@
-# Aegis Disaster Logistics and Route Safety Optimization System
+# Disaster Logistics and Route Safety Optimization System
 
 A full-stack disaster response system for route safety optimization and efficient relief logistics.
 
