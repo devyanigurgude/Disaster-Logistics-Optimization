@@ -1,4 +1,4 @@
-﻿﻿import { useEffect, useRef, useState } from "react";
+﻿﻿﻿﻿import { useEffect, useRef, useState } from "react";
 import { Loader2, Route, AlertTriangle, CheckCircle, ArrowRight, Info } from "lucide-react";
 import CitySearch from "@/components/CitySearch";
 import LeafletMap from "@/components/LeafletMap";
@@ -210,26 +210,25 @@ export default function RouteOperationsTab() {
   };
 
   return (
-    <div className="h-[calc(100vh-112px)]">
-      <div className="tab-shell h-full overflow-y-auto lg:overflow-hidden">
-        <div className="grid h-full grid-cols-1 grid-rows-[45vh_auto] gap-4 lg:grid-cols-4 lg:grid-rows-[1fr]">
-          <div className="min-w-0 min-h-0 lg:col-span-3">
-            <div className="stat-card h-full p-3">
-              <LeafletMap className="h-full w-full" />
-            </div>
+    <div className="h-full min-h-0">
+      <div className="tab-shell flex h-full min-h-0 flex-col overflow-y-auto lg:overflow-hidden">
+        <div className="grid flex-1 min-h-0 grid-cols-1 lg:grid-cols-12 gap-6">
+          <div className="lg:col-span-7 min-w-0 min-h-0 h-[45vh] lg:h-full">
+            <LeafletMap className="h-full w-full" />
           </div>
+      
+         <div className="lg:col-span-5 min-w-0 min-h-0 space-y-6 h-[45vh] lg:h-full overflow-y-auto pr-2">
+           <div className="stat-card">
+             <h2 className="page-title">Route Operations</h2>
+             <p className="mt-1 text-sm text-gray-500">
+                 Plan primary routes, detect blockages, and compare safe detours.
+             </p>
+           </div>
 
-          <div className="min-w-0 min-h-0 lg:col-span-1 space-y-6 overflow-visible lg:overflow-y-auto pr-1">
-            <div className="stat-card">
-              <h2 className="page-title">Route Operations</h2>
-              <p className="mt-1 text-sm text-gray-500">
-                Plan primary routes, detect blockages, and compare safe detours.
-              </p>
-            </div>
-
-            <section className="stat-card space-y-4">
-              <h3 className="section-title">Route Planning</h3>
-              <div className="space-y-3">
+          <section className="stat-card space-y-4">
+            <h3 className="section-title">Route Planning</h3>
+          <div className="space-y-3">
+        
             <CitySearch
               label="Source City"
               value={state.source}
@@ -349,5 +348,3 @@ export default function RouteOperationsTab() {
     </div>
   );
 }
-
-

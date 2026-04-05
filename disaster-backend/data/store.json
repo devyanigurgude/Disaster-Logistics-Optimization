@@ -71,10 +71,10 @@
       },
       "capacity": 4993,
       "current_stock": {
-        "food": 900,
-        "water": 1800,
-        "medicine": 450,
-        "first_aid": 270
+        "food": 800,
+        "water": 1600,
+        "medicine": 400,
+        "first_aid": 240
       },
       "id": "3b49b944-5f1a-4493-afa2-7ad2160c30e0"
     }
@@ -534,6 +534,25 @@
       "id": "28d027cc-36cc-472e-8629-02a2c18ffeb5",
       "status": "delivered",
       "timestamp": "2026-04-03T16:43:52.172289",
+      "eta": null
+    },
+    {
+      "warehouse_id": "3b49b944-5f1a-4493-afa2-7ad2160c30e0",
+      "destination": {
+        "name": "Ahilyanagar",
+        "lat": 19.092952,
+        "lon": 74.7493451
+      },
+      "resources": {
+        "food": 100,
+        "water": 200,
+        "medicine": 50,
+        "first_aid": 30
+      },
+      "route_summary": "Hi -> Ahilyanagar (2h 30m)",
+      "id": "d63aa784-d980-4f44-99d9-ca9f8011988a",
+      "status": "delivered",
+      "timestamp": "2026-04-04T15:44:49.561001",
       "eta": null
     }
   ]

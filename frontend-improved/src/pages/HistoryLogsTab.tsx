@@ -61,7 +61,7 @@ export default function HistoryLogsTab() {
   };
 
   return (
-    <div className="h-[calc(100vh-112px)] overflow-y-auto">
+    <div className="h-full min-h-0 overflow-y-auto">
       <div className="tab-shell space-y-6">
 
       {/* Header */}

@@ -16,7 +16,7 @@ function AppShell() {
   useLocalStorageSync();
 
   return (
-    <div className="flex min-h-screen flex-col bg-[#f5f7f6]">
+    <div className="flex h-screen h-[100dvh] flex-col bg-[#f5f7f6]">
       <AppHeader activeTab={activeTab} onTabChange={setActiveTab} />
 
       {error && (
@@ -26,7 +26,7 @@ function AppShell() {
         </div>
       )}
 
-      <main className="flex-1">
+      <main className="flex-1 min-h-0 overflow-hidden">
         {!ready ? (
           <div className="flex h-64 items-center justify-center text-sm text-muted-foreground">
             Connecting to backend...

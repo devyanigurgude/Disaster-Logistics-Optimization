@@ -92,18 +92,16 @@ export default function WarehousesTab() {
   );
 
   return (
-    <div className="h-[calc(100vh-112px)]">
-      <div className="tab-shell h-full overflow-y-auto lg:overflow-hidden">
-        <div className="grid h-full grid-cols-1 grid-rows-[45vh_auto] gap-4 lg:grid-cols-4 lg:grid-rows-[1fr]">
+    <div className="h-full min-h-0">
+      <div className="tab-shell flex h-full min-h-0 flex-col overflow-y-auto lg:overflow-hidden">
+        <div className="grid flex-1 min-h-0 grid-cols-1 lg:grid-cols-12 gap-6">
           {/* Map */}
-          <div className="min-w-0 min-h-0 lg:col-span-3">
-            <div className="stat-card h-full p-3">
-              <LeafletMap className="h-full w-full" />
-            </div>
+          <div className="lg:col-span-7 min-w-0 min-h-0 h-[45vh] lg:h-full stat-card p-3">
+            <LeafletMap className="h-full w-full" />
           </div>
 
           {/* Panel */}
-          <div className="min-w-0 min-h-0 lg:col-span-1 space-y-6 overflow-visible lg:overflow-y-auto pr-1">
+          <div className="lg:col-span-5 min-w-0 min-h-0 space-y-6 overflow-visible lg:overflow-y-auto lg:h-full pr-1">
 
             {/* Header */}
             <div className="stat-card flex items-start justify-between gap-4">

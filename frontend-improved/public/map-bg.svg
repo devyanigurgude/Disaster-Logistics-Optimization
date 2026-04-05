@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1920" height="1080" viewBox="0 0 1920 1080" fill="none">
+  <defs>
+    <linearGradient id="paper" x1="0" y1="0" x2="1920" y2="1080" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#f8fafc" />
+      <stop offset="1" stop-color="#eef2ff" />
+    </linearGradient>
+    <pattern id="grid" width="48" height="48" patternUnits="userSpaceOnUse">
+      <path d="M48 0H0V48" stroke="#0f172a" stroke-opacity="0.045" stroke-width="1" />
+    </pattern>
+    <style>
+      .minor{stroke:#0f172a;stroke-opacity:.07;stroke-width:2;fill:none;stroke-linecap:round;stroke-linejoin:round}
+      .major{stroke:#0f172a;stroke-opacity:.11;stroke-width:3.25;fill:none;stroke-linecap:round;stroke-linejoin:round}
+      .river{stroke:#2563eb;stroke-opacity:.09;stroke-width:4;fill:none;stroke-linecap:round;stroke-linejoin:round}
+      .label{fill:#0f172a;fill-opacity:.12;font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Inter,Arial,sans-serif;font-size:20px;letter-spacing:.08em}
+      .tiny{font-size:14px;fill-opacity:.10}
+    </style>
+  </defs>
+
+  <rect width="1920" height="1080" fill="url(#paper)" />
+  <rect width="1920" height="1080" fill="url(#grid)" />
+
+  <!-- river-ish -->
+  <path class="river" d="M-40 260 C 140 340, 220 260, 360 320 C 520 390, 640 320, 820 400 C 980 470, 1140 410, 1300 470 C 1460 530, 1600 510, 1960 620" />
+  <path class="river" d="M-60 780 C 140 720, 280 820, 420 770 C 560 720, 680 780, 860 740 C 1040 700, 1200 780, 1360 730 C 1520 680, 1700 760, 1960 700" />
+
+  <!-- major roads -->
+  <path class="major" d="M70 140 C 260 220, 360 120, 520 210 C 720 320, 860 230, 1020 300 C 1240 395, 1320 300, 1500 370 C 1670 435, 1780 360, 1880 410" />
+  <path class="major" d="M120 980 C 290 860, 430 1010, 610 900 C 790 790, 910 910, 1080 820 C 1260 730, 1420 880, 1600 770 C 1760 670, 1840 770, 1900 740" />
+  <path class="major" d="M980 -40 C 880 140, 1040 240, 940 400 C 840 560, 1040 700, 920 860 C 800 1020, 920 1120, 980 1180" />
+
+  <!-- minor streets -->
+  <path class="minor" d="M220 120 C 260 240, 180 320, 260 460 C 340 600, 260 710, 360 820 C 460 930, 420 1040, 520 1120" />
+  <path class="minor" d="M360 180 C 520 220, 520 360, 660 420 C 820 490, 780 650, 940 700 C 1120 760, 1100 890, 1240 950" />
+  <path class="minor" d="M620 120 C 720 260, 640 340, 760 500 C 880 660, 820 740, 980 860 C 1120 950, 1200 1020, 1380 1120" />
+  <path class="minor" d="M1280 140 C 1180 260, 1320 320, 1240 470 C 1160 620, 1320 700, 1260 840 C 1200 980, 1300 1040, 1380 1120" />
+  <path class="minor" d="M1460 160 C 1600 300, 1500 420, 1660 560 C 1820 700, 1700 860, 1860 980" />
+  <path class="minor" d="M80 560 C 220 520, 300 640, 420 600 C 560 550, 620 650, 760 610 C 920 560, 980 700, 1120 660 C 1280 610, 1360 700, 1500 650 C 1640 600, 1760 700, 1900 660" />
+  <path class="minor" d="M160 360 C 320 420, 380 520, 540 560 C 700 600, 760 730, 940 760 C 1120 790, 1180 920, 1360 940 C 1540 960, 1620 1040, 1800 1060" />
+
+  <!-- labels -->
+  <text class="label" x="240" y="270">SECTOR 12</text>
+  <text class="label" x="1090" y="250">RIDGEWAY</text>
+  <text class="label" x="1460" y="640">NORTH LOOP</text>
+  <text class="label tiny" x="360" y="720">STATION</text>
+  <text class="label tiny" x="1220" y="820">DEPOT</text>
+  <text class="label tiny" x="820" y="540">HUB</text>
+</svg>

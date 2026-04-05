@@ -97,12 +97,38 @@ export default {
             height: "0",
           },
         },
+        float: {
+          "0%, 100%": { transform: "translateY(0px)" },
+          "50%": { transform: "translateY(-10px)" },
+        },
+        "hero-in": {
+          "0%": { opacity: "0", transform: "translateY(30px)" },
+          "100%": { opacity: "1", transform: "translateY(0)" },
+        },
+        slowZoom: {
+          "0%": { transform: "scale(1.05)" },
+          "100%": { transform: "scale(1.12)" },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
+        float: "float 6s ease-in-out infinite",
+        "float-fast": "float 5s ease-in-out infinite",
+        "float-slow": "float 8s ease-in-out infinite",
+        "float-slower": "float 8s ease-in-out infinite",
+        "hero-in": "hero-in 900ms cubic-bezier(0.16, 1, 0.3, 1) both",
+        slowZoom: "slowZoom 25s linear infinite",
+      },
+      theme: {
+      extend: {
+      zIndex: {
+      '-30': '-30',
       },
     },
+    }
+    },
+    
   },
   plugins: [tailwindcssAnimate],
 } satisfies Config;
