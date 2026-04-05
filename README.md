@@ -3,7 +3,7 @@
 A full-stack disaster response system for route safety optimization and efficient relief logistics.
 
 ## 📌 Overview
-Aegis helps coordinate relief operations during disasters by:
+Routex helps coordinate relief operations during disasters by:
 - Managing disaster zones and warehouse inventories
 - Calculating routes that avoid unsafe/blocked areas
 - Supporting dispatch planning with stock validation
@@ -12,7 +12,7 @@ Aegis helps coordinate relief operations during disasters by:
 ## 🎯 Why This Project
 
 In disaster situations, traditional routing systems fail to account for unsafe zones.  
-Aegis addresses this by integrating disaster-aware routing with logistics and resource management.
+Routex addresses this by integrating disaster-aware routing with logistics and resource management.
 
 ## 🚀 Features
 - Disaster Management: add / edit / delete disaster zones
@@ -42,7 +42,7 @@ Aegis addresses this by integrating disaster-aware routing with logistics and re
 
 ## 📂 Project Structure
 ```
-AEGIS/
+Routex/
  ├── frontend-improved/
  └── disaster-backend/
 ```
@@ -52,7 +52,6 @@ AEGIS/
 ### 1. Clone Repository
 ```bash
 git clone https://github.com/devyanigurgude/Disaster-Logistics-Optimization-System.git 
-cd AEGIS
 ```
 
 ### 2. Backend Setup

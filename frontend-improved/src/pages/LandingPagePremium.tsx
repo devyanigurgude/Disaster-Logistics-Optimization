@@ -39,7 +39,7 @@ export default function LandingPagePremium() {
           </h1>
 
           <p className="mt-6 text-gray-600 text-lg max-w-2xl mx-auto">
-            A minimal live preview of AEGIS — built for fast, confident routing under pressure.
+            A minimal live preview of Routex — built for fast, confident routing under pressure.
           </p>
 
           <button
